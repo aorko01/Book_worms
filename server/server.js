@@ -1,5 +1,5 @@
 require('dotenv').config();
-const db=require('./db');
+
 const express=require('express');
 const app = express();
 const port = 3000;
@@ -14,6 +14,8 @@ app.use(express.json());
 
 
 app.use("/auth", require('./routes/jwtAuth'));
+
+app.use("/Home", require('./routes/home'));
 
 app.listen (3000, () => {
     console.log(`Server is running on port ${port}`);

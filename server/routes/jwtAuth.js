@@ -2,10 +2,12 @@ const router = require("express").Router();
 const pool = require("../db");
 const bcrypt = require("bcrypt");
 const jwtGenerator = require("../utils/jwtgenerator");
+const validInfo = require("../middleware/validinfo");
+const authorization = require("../middleware/authorization");
 
-router.post("/register", async (req, res) => {
+router.post("/register",validInfo, async (req, res) => {
   try {
-    const { firstname, lastname, email_address, password } = req.body;
+    const { first_name, last_name, email_address, password } = req.body;
 
     //check if user exists
     const user = await pool.query(
@@ -23,7 +25,7 @@ router.post("/register", async (req, res) => {
       const bcryptPassword = await bcrypt.hash(password, salt);
       const newUser = await pool.query(
         "INSERT INTO user_info (first_name, last_name, email_address, password) VALUES ($1, $2, $3, $4) RETURNING *",
-        [firstname, lastname, email_address, bcryptPassword]
+        [first_name, last_name, email_address, bcryptPassword]
       );
       const token = jwtGenerator(newUser.rows[0].user_id);
       res.json({ token });
@@ -54,6 +56,16 @@ router.post("/login", async (req, res) => {
         res.status(500).send("Server error");
     }
 
+});
+
+router.get("/is-verify", authorization, async (req, res) => {
+    console.log("hit");
+    try {
+        res.json(true);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send("Server error");
+    }
 });
 
 module.exports = router;
