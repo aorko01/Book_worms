@@ -1,0 +1,78 @@
+function 1: to encrypt the password using blowfish algorithm
+
+CREATE OR REPLACE FUNCTION encrypt_password_before_insert()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Encrypt the password using the 'crypt' function with a salt.
+  -- The 'bf' argument specifies the Blowfish encryption algorithm.
+  NEW.password = crypt(NEW.password, gen_salt('bf'));
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+trigger 1: to encrypt the password before inserting the data into the table
+CREATE TRIGGER encrypt_password_before_insert_trigger
+BEFORE INSERT ON user_info
+FOR EACH ROW
+EXECUTE FUNCTION encrypt_password_before_insert();
+
+--check:
+--SELECT (crypt('password123', password) = password) AS is_password_correct
+--FROM user_info
+--WHERE email_address='john.doe@example.com';
+
+function 2: to check whether the book already exists in the table or not
+CREATE OR REPLACE FUNCTION check_duplicate_title()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM Book WHERE title = NEW.title) THEN
+        RAISE EXCEPTION 'Book with title % already exists', NEW.title;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+trigger 2: to check whether the book already exists in the table or not
+CREATE TRIGGER check_duplicate_title_trigger
+BEFORE INSERT ON Book
+FOR EACH ROW
+EXECUTE FUNCTION check_duplicate_title();
+
+--check:(the inserted VALUES already exists in the table so should throw an exception)
+--INSERT INTO Book (title, author_name, genre, availability)
+--VALUES ('The Great Gatsby', 'F. Scott Fitzgerald', 'Fiction', true);
+
+
+function 3: to get the return date of the book 
+CREATE OR REPLACE FUNCTION calculate_return_date_from_sharing(copy_id BIGINT, borrowed_for_days INT)
+RETURNS TIMESTAMP AS $$
+DECLARE
+  sharing_date TIMESTAMP;
+  return_date TIMESTAMP;
+BEGIN
+  -- Retrieve the most recent sharing_date for the given copy_id from the Sharing table
+  SELECT sharing_date INTO sharing_date
+  FROM Sharing
+  WHERE copy_id = copy_id
+  ORDER BY sharing_date DESC
+  LIMIT 1;
+
+  -- Check if a sharing_date was found
+  IF sharing_date IS NULL THEN
+    RAISE EXCEPTION 'No sharing record found for copy_id %', copy_id;
+  END IF;
+
+  -- Calculate the return date by adding borrowed_for_days to the sharing_date
+  return_date := sharing_date + (borrowed_for_days * INTERVAL '1 day');
+
+  -- Return the calculated return date
+  RETURN return_date;
+END;
+$$ LANGUAGE plpgsql;
+
+
+check:
+--SELECT calculate_return_date_from_sharing(1, 14) AS return_date;

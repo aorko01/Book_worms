@@ -1,0 +1,98 @@
+CREATE TABLE user_info (
+    user_id BIGSERIAL PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email_address VARCHAR(100) UNIQUE,
+    password VARCHAR(100) 
+);
+
+
+CREATE TABLE Book (
+    book_id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    author_name VARCHAR(255) NOT NULL,
+    genre VARCHAR(100),
+    availability BOOLEAN NOT NULL
+);
+
+CREATE TABLE FriendList (
+    user_id INT,
+    friend_id INT,
+    friend_since TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user_info(user_id),
+    FOREIGN KEY (friend_id) REFERENCES user_info(user_id)
+);
+
+CREATE TABLE FriendRequest (
+    from_id INT NOT NULL,
+    to_id INT NOT NULL,
+    request_status VARCHAR(20) NOT NULL,
+    request_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (from_id) REFERENCES user_info(user_id),
+    FOREIGN KEY (to_id) REFERENCES user_info(user_id)
+);
+
+CREATE TABLE Review (
+    review_id SERIAL PRIMARY KEY,
+    book_id INT NOT NULL,
+    review_text TEXT,
+    upvotes INT DEFAULT 0,
+    reviewer_id INT NOT NULL,
+    FOREIGN KEY (book_id) REFERENCES Book(book_id),
+    FOREIGN KEY (reviewer_id) REFERENCES user_info(user_id)
+);
+
+ALTER TABLE Book
+ADD COLUMN isbn VARCHAR(20) UNIQUE;
+
+CREATE TABLE comment_info (
+    comment_id BIGSERIAL PRIMARY KEY,
+    commentor_id INT NOT NULL,
+    review_id INT NOT NULL,
+    prev_comment_id BIGINT,
+    FOREIGN KEY (commentor_id) REFERENCES user_info(user_id),
+    FOREIGN KEY (review_id) REFERENCES Review(review_id),
+    FOREIGN KEY (prev_comment_id) REFERENCES Comment(comment_id)
+);
+
+
+
+
+CREATE TABLE Group_info (
+    group_id BIGSERIAL PRIMARY KEY,
+    group_name VARCHAR(255) NOT NULL,
+    moderator_id INT NOT NULL,
+    creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (moderator_id) REFERENCES user_info(user_id)
+);
+
+CREATE TABLE Member (
+    member_id BIGSERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    group_id BIGINT NOT NULL,
+    join_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user_info(user_id),
+    FOREIGN KEY (group_id) REFERENCES group_info(group_id)
+);
+
+CREATE TABLE BookCopy (
+    copy_id BIGSERIAL PRIMARY KEY,
+    book_id INT NOT NULL,
+    owner_id INT NOT NULL,
+    availability BOOLEAN NOT NULL,
+    sharing_status VARCHAR(50),
+    FOREIGN KEY (book_id) REFERENCES Book(book_id),
+    FOREIGN KEY (owner_id) REFERENCES user_info(user_id)
+);
+
+
+CREATE TABLE Sharing (
+    sharing_id BIGSERIAL PRIMARY KEY,
+    borrower_id INT NOT NULL,
+    copy_id BIGINT NOT NULL,
+    sharing_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (borrower_id) REFERENCES user_info(user_id),
+    FOREIGN KEY (copy_id) REFERENCES BookCopy(copy_id)
+);
+
+
