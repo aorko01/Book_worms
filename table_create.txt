@@ -12,7 +12,6 @@ CREATE TABLE Book (
     title VARCHAR(255) NOT NULL,
     author_name VARCHAR(255) NOT NULL,
     genre VARCHAR(100),
-    availability BOOLEAN NOT NULL
 );
 
 CREATE TABLE FriendList (

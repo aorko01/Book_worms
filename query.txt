@@ -1,0 +1,59 @@
+Query
+Suggest books ﻿
+let id is 1.
+
+suggest books of friends
+
+select *
+from book
+where owner_id IN
+(select friend_id from friend_list
+where user_id=1)
+
+suggest books of friends of friends
+
+SELECT b.*
+FROM book b
+JOIN friend_list f1 ON b.owner_id = f1.friend_id
+JOIN friend_list f2 ON f1.friend_id = f2.user_id
+WHERE f2.friend_id = 1;
+
+2.feed with review.
+
+review of friends
+select book_name,content,upvotes
+from review_table
+where (reviewer_id in
+	  (select friend_id
+	  from friend_list
+	  where user_id =1)
+	  )
+	  
+reviews of friends of friends
+
+SELECT r.book_name, r.content, r.upvotes
+FROM review_table r
+WHERE r.reviewer_id IN (
+    SELECT f2.friend_id
+    FROM friend_list f1
+    JOIN friend_list f2 ON f1.friend_id = f2.user_id
+    WHERE f1.user_id = 1
+);
+
+3.increase the value of upvotes
+
+UPDATE review_table
+SET upvotes = upvotes + 1
+WHERE review_id = 1;
+
+4.primary comments 
+
+select comment_text, upvotes
+from comment_info
+where review_id=1 and prev_comment_id is null
+
+nested comments
+
+select comment_text, upvotes
+from comment_info
+where review_id=1 and prev_comment_id =1
