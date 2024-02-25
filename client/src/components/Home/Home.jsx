@@ -2,7 +2,7 @@ import React from "react";
 import NavigationBar from "../NavigationBar/NavigationBar";
 
 
-const HomePage = () => {
+const Home = () => {
   return (
     <div>
       {/* Include the NavigationBar component */}
@@ -76,4 +76,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default Home;

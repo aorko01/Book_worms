@@ -5,11 +5,11 @@ const app = express();
 const port = 3000;
 require('dotenv').config();
 
-// const cors = require('cors');
+const cors = require('cors');
 
 app.use(express.json());
 
-// app.use(cors());
+app.use(cors());
 // just send a response to the client
 
 

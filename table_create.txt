@@ -7,6 +7,13 @@ CREATE TABLE user_info (
 );
 
 
+ALTER TABLE user_info
+ALTER COLUMN first_name SET NOT NULL,
+ALTER COLUMN last_name SET NOT NULL,
+ALTER COLUMN email_address SET NOT NULL,
+ALTER COLUMN password SET NOT NULL;
+
+
 CREATE TABLE Book (
     book_id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
