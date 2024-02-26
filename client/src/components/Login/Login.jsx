@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const LoginPage = () => {
+const LoginPage = ({setAuth}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [typedIntroText, setTypedIntroText] = useState('');
@@ -36,10 +36,29 @@ const LoginPage = () => {
     return () => clearInterval(intervalLorem);
   }, []);
 
-  const handleLogin = () => {
+  const handleLogin = async(e) => {
     // Add your login logic here
     console.log('Email:', email);
     console.log('Password:', password);
+    setAuth(true);
+    e.preventDefault();
+    try {
+      const response = await fetch('http://localhost:3000/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email_address: email, password: password })
+      });
+
+      const parseRes = await response.json();
+      console.log(parseRes);
+      localStorage.setItem('token', parseRes.token);
+      setAuth(true);
+    } catch (error) {
+      console.error(error.message);
+    }
+
   };
 
   const handleRegister = () => {
@@ -87,6 +106,7 @@ const LoginPage = () => {
             className="bg-blue-500 
             rounded-xl hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             onClick={handleLogin}
+            // onClick={() => setAuth(true)}
           >
             Login
           </button>

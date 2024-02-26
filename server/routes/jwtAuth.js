@@ -28,7 +28,7 @@ router.post("/register",validInfo, async (req, res) => {
         [first_name, last_name, email_address, bcryptPassword]
       );
       const token = jwtGenerator(newUser.rows[0].user_id);
-      res.json({ token });
+      res.stauts(200).json({ token });
     }
     //enter the user into the database
   } catch (error) {

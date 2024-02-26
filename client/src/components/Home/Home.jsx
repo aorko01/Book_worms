@@ -3,6 +3,9 @@ import NavigationBar from "../NavigationBar/NavigationBar";
 
 
 const Home = () => {
+
+
+
   return (
     <div>
       {/* Include the NavigationBar component */}
