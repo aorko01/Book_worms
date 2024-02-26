@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
-const LoginPage = ({setAuth}) => {
+const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [typedIntroText, setTypedIntroText] = useState('');
   const [typedLoremText, setTypedLoremText] = useState('');
-  const introTextToType = " Good Day!"; // Text to type out
-  const loremTextToType = "H appiness and Books are worth sharing..."; // Lorem Ipsum text
+  const introTextToType = " Good Day!";
+  const loremTextToType = "H appiness and Books are worth sharing...";
+
+  // Create an instance of useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     let index = 0;
@@ -17,7 +21,7 @@ const LoginPage = ({setAuth}) => {
       } else {
         clearInterval(intervalIntro);
       }
-    }, 100); // Typing speed (adjust as needed)
+    }, 100);
 
     return () => clearInterval(intervalIntro);
   }, []);
@@ -31,16 +35,12 @@ const LoginPage = ({setAuth}) => {
       } else {
         clearInterval(intervalLorem);
       }
-    }, 50); // Typing speed (adjust as needed)
+    }, 50);
 
     return () => clearInterval(intervalLorem);
   }, []);
 
   const handleLogin = async(e) => {
-    // Add your login logic here
-    console.log('Email:', email);
-    console.log('Password:', password);
-    setAuth(true);
     e.preventDefault();
     try {
       const response = await fetch('http://localhost:3000/auth/login', {
@@ -51,19 +51,23 @@ const LoginPage = ({setAuth}) => {
         body: JSON.stringify({ email_address: email, password: password })
       });
 
-      const parseRes = await response.json();
-      console.log(parseRes);
-      localStorage.setItem('token', parseRes.token);
-      setAuth(true);
+      if (response.status === 200) {
+        const parseRes = await response.json();
+        console.log(parseRes);
+        localStorage.setItem('token', parseRes.token);
+        navigate('/home'); // Navigate to /home if the login is successful
+      } else {
+        // Handle login failure (e.g., show an error message)
+        console.error('Login failed');
+      }
     } catch (error) {
       console.error(error.message);
     }
-
   };
 
   const handleRegister = () => {
-    // Add your register logic here
     console.log('Redirect to registration page');
+    navigate('/register'); // Assuming you want to navigate to the Register page on this action
   };
 
   return (
