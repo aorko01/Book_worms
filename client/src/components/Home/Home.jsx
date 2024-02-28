@@ -1,78 +1,56 @@
 import React from "react";
 import NavigationBar from "../NavigationBar/NavigationBar";
 
-
 const Home = () => {
-
-
-
   return (
-    <div>
-      {/* Include the NavigationBar component */}
+    <div className="bg-gray-900 text-white min-h-screen">
       <NavigationBar />
 
-      <div class="flex justify-between my-10">
+      <div className="flex justify-between my-10 mx-10 pt-[4rem]" style={{ paddingTop: '4rem' }}> {/* Adjust this padding value based on the actual height of your navigation bar */}
         {/* Left Division - Book Suggestions */}
-        <div className="w-1/4 pr-4  ">
-          <h2 className="text-xl font-semibold mb-4">Book Suggestions</h2>
-          {/* Placeholder for book suggestions */}
-          {/* You can map through your book suggestions data here */}
-          <div className="bg-gray-700 p-4 mb-4 rounded shadow flex flex-col items-center rounded-xl"> 
-            <img className="rounded-lg mb-2"
+        <div className="w-1/4 pr-4 border-r border-gray-700">
+          <h2 className="text-3xl font-semibold mb-7">Book Suggestions</h2>
+          <div className="bg-gray-800 p-4 mb-4 rounded-lg shadow-lg flex flex-col items-center">
+            <img
+              className="rounded-lg mb-2"
               src="http://books.google.com/books/content?id=Jrx6EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
               alt=""
-              style={{ width: "80%" }} 
+              style={{ width: "80%" }}
             />
-            <div className="mb-2 flex justify-center ">Book Title</div>
-            <div className="mb-2 flex justify-center ">Author Name</div>
-            <div className="mb-2 flex justify-center">Genre</div>
+            <div className="mb-2 flex text-2xl justify-center">Book Title</div>
+            <div className="mb-2 flex text-xl justify-center">Author Name</div>
+            <div className="mb-2 flex justify-center text-lg">Genre</div>
           </div>
-          {/* Repeat the above block for each book suggestion */}
         </div>
 
         {/* Middle Division - Write Review Section */}
-        <div className="w-1/2 px-4">
-          <h2 className="text-xl font-semibold mb-4">Write Review</h2>
-          {/* Form for writing a review */}
-          <div className="mb-4 border-2 border-sky-800 p-4 bg-gray-800">
-            {" "}
-            {/* Wrapper div added */}
+        <div className="w-1/2 px-4 ">
+          <h2 className="text-3xl font-semibold mb-7">Write Review</h2>
+          <div className="mb-4 p-6 bg-gray-800 rounded-lg shadow-lg">
             <input
               type="text"
               placeholder="Book Name"
-              className="w-full border rounded py-2 px-3 mb-2 bg-sky-900" // Added bg-gray-200
+              className="bg-gray-700 text-white rounded-xl px-4 py-2 focus:outline-none focus:bg-gray-600 mb-5"
             />
             <textarea
               placeholder="Write your review here..."
-              className="w-full border rounded py-2 px-3 mb-2 h-32 bg-gray-200" // Added bg-gray-200
+              className="w-full bg-gray-700 text-white rounded-xl px-4 py-2 focus:outline-none focus:bg-gray-600 mb-5"
+              style={{ minHeight: '100px' }} // Adjusted the minHeight to make the height smaller
             ></textarea>
-            <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            <button
+              className="w-full bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-xl transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
+            >
               Post Review
             </button>
           </div>
-          {/* End of wrapper div */}
-
-          {/* Placeholder for displaying other reviews */}
-          {/* You can map through your reviews data here */}
-          <div className="bg-white p-4 mb-4 rounded shadow">
-            <div className="mb-2">Review Text</div>
-            <button className="bg-gray-200 text-gray-700 px-3 py-1 rounded hover:bg-gray-300 mr-2">
-              Upvote
-            </button>
-            {/* Add comment section and button here */}
-          </div>
-          {/* Repeat the above block for each review */}
         </div>
 
         {/* Right Division - Chat List */}
-        <div className="w-1/5 pl-4">
-          <h2 className="text-xl font-semibold mb-4">Chat List</h2>
-          {/* Placeholder for chat list */}
-          {/* You can map through your chat list data here */}
-          <div className="bg-white p-4 mb-4 rounded shadow">
+        <div className="w-1/5 pl-4 border-l border-gray-700">
+          <h2 className="text-3xl font-semibold mb-6">Chat List</h2>
+          <div className="bg-gray-800 p-4 mb-4 rounded-lg shadow-lg">
             {/* Chat list content */}
           </div>
-          {/* Repeat the above block for each chat */}
         </div>
       </div>
     </div>

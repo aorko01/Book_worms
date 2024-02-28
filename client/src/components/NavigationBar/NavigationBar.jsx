@@ -3,7 +3,7 @@ import React from "react";
 
 const NavigationBar = () => {
   return (
-    <nav className="bg-gray-800 text-white rounded-3xl p-4 ">
+    <nav className="bg-gray-800 text-white rounded-3xl p-4" style={{ position: 'fixed', width: '100%', top: 0, zIndex: 1000 }}>
       <div className="flex justify-between items-center">
         {/* Search input field */}
         <div>
