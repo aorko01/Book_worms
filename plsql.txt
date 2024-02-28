@@ -76,3 +76,27 @@ $$ LANGUAGE plpgsql;
 
 check:
 --SELECT calculate_return_date_from_sharing(1, 14) AS return_date;
+
+auto add to friendlist
+
+-- Step 1: Create the trigger function
+CREATE OR REPLACE FUNCTION process_acceptance()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Check if the acceptance column is updated to true
+    IF NEW.acceptance = TRUE AND OLD.acceptance IS DISTINCT FROM NEW.acceptance THEN
+        -- Insert user_id and friend_id into the friendlist table
+        INSERT INTO public.friendlist(user_id, friend_id, friend_since)
+        VALUES (NEW.from_id, NEW.to_id, CURRENT_TIMESTAMP),
+               (NEW.to_id, NEW.from_id, CURRENT_TIMESTAMP);
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Step 2: Create the trigger
+CREATE TRIGGER trigger_after_acceptance_update
+AFTER UPDATE OF acceptance ON public.friendrequest
+FOR EACH ROW
+WHEN (OLD.acceptance IS DISTINCT FROM NEW.acceptance AND NEW.acceptance = TRUE)
+EXECUTE FUNCTION process_acceptance();
