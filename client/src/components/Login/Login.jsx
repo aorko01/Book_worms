@@ -46,18 +46,20 @@ const LoginPage = () => {
       const response = await fetch('http://localhost:3000/auth/login', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ email_address: email, password: password })
       });
+
+      console.log(response);
 
       if (response.status === 200) {
         const parseRes = await response.json();
         console.log(parseRes);
-        localStorage.setItem('token', parseRes.token);
         navigate('/home'); // Navigate to /home if the login is successful
       } else {
-        // Handle login failure (e.g., show an error message)
+        
         console.error('Login failed');
       }
     } catch (error) {
