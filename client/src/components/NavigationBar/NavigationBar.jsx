@@ -1,26 +1,43 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 const NavigationBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [searchText, setSearchText] = useState(''); // State to hold search text
+
+  const navigate = useNavigate();
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
-  const navigate = useNavigate();
+
+  // Update the search text state on input change
+  const handleSearchChange = (event) => {
+    setSearchText(event.target.value);
+  };
+
+  // Navigate to /search route with search text as query parameter on Enter key press
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      navigate(`/search?query=${encodeURIComponent(searchText)}`);
+      console.log('Search for:', searchText);
+    }
+  };
+
   return (
     <nav
       className="bg-gray-800 text-white rounded-3xl p-4"
       style={{ position: "fixed", width: "100%", top: 0, zIndex: 1000 }}
     >
       <div className="flex justify-between items-center">
-        {/* Search input field */}
         <div>
           <input
             type="text"
             placeholder="Search..."
             className="bg-gray-700 text-white rounded-xl px-4 py-2 focus:outline-none focus:bg-gray-600"
+            value={searchText} // Bind input value to state
+            onChange={handleSearchChange} // Update state on change
+            onKeyDown={handleKeyDown} // Handle Enter key press
           />
         </div>
         {/* Navlinks */}

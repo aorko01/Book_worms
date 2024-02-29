@@ -13,6 +13,7 @@ import Friends from "./components/Friends/Friends";
 import Groups from "./components/Groups/Groups";
 import AddBook from "./components/AddBook/AddBook";
 import Profile from "./components/Profile/Profile";
+import Search from "./components/Search/Search";
 const App = () => {
 
 
@@ -27,6 +28,7 @@ const App = () => {
         <Route path="/groups" element={<Groups />} />
         <Route path="/add-book" element={<AddBook />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/search" element={<Search />} />
       </Routes>
     </Router>
   );

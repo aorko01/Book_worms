@@ -23,6 +23,24 @@ app.use("/auth", require('./routes/jwtAuth'));
 
 app.use("/Home", require('./routes/home'));
 
+app.use("search",require('./routes/search'));
+
+app.use("/books-all", require('./routes/booksAll'));
+
+// app.use("/post-review", require('./routes/postReview'));
+
+// app.use("/increase-upvotes", require('./routes/increaseUpvotes'));
+
+// app.use("/post-comment", require('./routes/postComment'));
+
+
+
+// app.use("friends", require('./routes/friends'));
+
+// app.use("groups", require('./routes/groups'));
+
+// app.use("add-book", require('./routes/addBook'));
+
 app.listen (3000, () => {
     console.log(`Server is running on port ${port}`);
 })

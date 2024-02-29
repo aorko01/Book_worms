@@ -35,4 +35,4 @@ async function searchBook(title) {
 }
 
 // Example usage
-searchBook('psychology of money');
+searchBook('The Great Gatsby');

@@ -49,8 +49,8 @@ const Home = () => {
               <img
                 className="rounded-lg mb-2"
                 src={
-                  book.image ||
-                  "http://books.google.com/books/content?id=Jrx6EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                  book.cover_url ||
+                   "../public/photo_2024-02-29_23-38-49.jpg"
                 }
                 // className="w-3/4 h-auto mb-2 rounded-lg"
                 alt={book.title}
@@ -98,7 +98,7 @@ const Home = () => {
                   {/* Update this container */}
                   <img
                     className=" w-20 h-auto mb-2"
-                    src="http://books.google.com/books/content?id=m_xcEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                    src={review.bookInfo.cover_url || "../public/photo_2024-02-29_23-38-49.jpg"} 
                     alt="Book Cover"
                   />
                   <div className="text-center text-lg">
