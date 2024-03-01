@@ -21,7 +21,8 @@ async function searchBook(title) {
       title: bookData.volumeInfo.title,
       authors: bookData.volumeInfo.authors,
       coverUrl: bookData.volumeInfo.imageLinks?.thumbnail || 'No cover available',
-      genre: bookData.volumeInfo.categories || 'Genre not specified',
+      genre: bookData.volumeInfo.categories || ['Genre not specified'],
+      pageCount: bookData.volumeInfo.pageCount || 'Page count not available',
     };
 
     console.log('Book Information:');
@@ -29,10 +30,11 @@ async function searchBook(title) {
     console.log('Authors:', bookInfo.authors.join(', '));
     console.log('Cover URL:', bookInfo.coverUrl);   
     console.log('Genre:', bookInfo.genre.join(', '));
+    console.log('Page Count:', bookInfo.pageCount);
   } catch (error) {
     console.error('Error fetching book information:', error.message);
   }
 }
 
 // Example usage
-searchBook('The Great Gatsby');
+searchBook('Viktor Frankl');

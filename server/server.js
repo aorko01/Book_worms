@@ -30,11 +30,12 @@ app.use("/books-all", require('./routes/booksAll'));
 app.use("/logout", require('./routes/logout'));
 
 
+
 //   res.send({ status: 'success', message: 'Logged out successfully' });
 // });
 
 
-// app.use("/post-review", require('./routes/postReview'));
+app.use("/post-review", require('./routes/postReview'));
 
 // app.use("/increase-upvotes", require('./routes/increaseUpvotes'));
 

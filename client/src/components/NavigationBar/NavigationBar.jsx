@@ -81,7 +81,7 @@ const NavigationBar = () => {
             Notifications
           </NavLink>
           <NavLink to="/add-book" className={({ isActive }) => isActive ? "text-orange-700 mr-4" : "text-white mr-4"}>
-            Add Book
+            Add/delete Book
           </NavLink>
           <div className="relative">
             <button className="text-white" onClick={toggleDropdown}>
