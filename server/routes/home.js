@@ -7,6 +7,8 @@ router.get("/", authorization, async (req, res) => {
   console.log("userId: ", userId);
 
   try {
+    const allBooksQuery = `select * from book`;
+
     const bookQuery = `
       SELECT DISTINCT book.*
       FROM book
@@ -33,6 +35,7 @@ router.get("/", authorization, async (req, res) => {
     `;
     const { rows: books } = await pool.query(bookQuery, [userId]);
 
+    const { rows: allBooks } = await pool.query(allBooksQuery);
     const reviewQuery = `
       SELECT 
         r.review_id, 
@@ -110,6 +113,7 @@ router.get("/", authorization, async (req, res) => {
       reviews,
       friends,
       groups,
+      allBooks,
     };
     res.json(responseData);
   } catch (error) {
