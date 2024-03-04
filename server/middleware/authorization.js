@@ -5,7 +5,7 @@ module.exports = async (req,res,next)=>{
     try {
         // console.log(req.headers);
         const jwtToken = req.cookies.token;
-        console.log(jwtToken);
+        // console.log(jwtToken);
 
         if(!jwtToken){
             console.log("Not Authorized");

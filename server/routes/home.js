@@ -4,7 +4,7 @@ const authorization = require("../middleware/authorization");
 
 router.get("/", authorization, async (req, res) => {
   const userId = req.user;
-  console.log("userId: ", userId);
+  // console.log("userId: ", userId);
 
   try {
     const allBooksQuery = `select * from book`;

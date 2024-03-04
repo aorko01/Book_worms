@@ -31,10 +31,6 @@ app.use("/logout", require('./routes/logout'));
 
 
 
-//   res.send({ status: 'success', message: 'Logged out successfully' });
-// });
-
-
 app.use("/post-review", require('./routes/postReview'));
 
 // app.use("/increase-upvotes", require('./routes/increaseUpvotes'));
@@ -43,7 +39,7 @@ app.use("/post-review", require('./routes/postReview'));
 
 
 
-// app.use("friends", require('./routes/friends'));
+app.use("/friends", require('./routes/friends'));
 
 // app.use("groups", require('./routes/groups'));
 

@@ -100,3 +100,31 @@ AFTER UPDATE OF acceptance ON public.friendrequest
 FOR EACH ROW
 WHEN (OLD.acceptance IS DISTINCT FROM NEW.acceptance AND NEW.acceptance = TRUE)
 EXECUTE FUNCTION process_acceptance();
+
+
+trigger 
+automatically add to friendlist when the acceptance is true
+-- Function to insert into friendlist upon acceptance
+CREATE OR REPLACE FUNCTION add_friends()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Check if acceptance is true
+    IF NEW.acceptance = true THEN
+        -- Insert the pair as friends into the friendlist table
+        INSERT INTO public.friendlist (user_id, friend_id, friend_since)
+        VALUES (NEW.from_id, NEW.to_id, CURRENT_TIMESTAMP);
+
+        -- Optionally, add the reverse relationship as well
+        INSERT INTO public.friendlist (user_id, friend_id, friend_since)
+        VALUES (NEW.to_id, NEW.from_id, CURRENT_TIMESTAMP);
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to invoke the function upon acceptance update
+CREATE TRIGGER trigger_add_friends
+AFTER UPDATE OF acceptance ON public.friendrequest
+FOR EACH ROW
+WHEN (OLD.acceptance IS NOT TRUE AND NEW.acceptance IS TRUE)
+EXECUTE FUNCTION add_friends();

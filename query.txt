@@ -57,3 +57,48 @@ nested comments
 select comment_text, upvotes
 from comment_info
 where review_id=1 and prev_comment_id =1
+
+
+5.friendrequst
+
+SELECT ui.user_id, ui.first_name, ui.last_name, ui.email_address
+FROM public.friendrequest AS fr
+JOIN public.user_info AS ui ON fr.from_id = ui.user_id
+WHERE fr.to_id = 24 AND fr.acceptance = false AND fr.rejected = false;
+
+6. friend suggest
+SELECT DISTINCT u.user_id, u.first_name, u.last_name, u.email_address
+FROM public.user_info u
+WHERE u.user_id IN (
+    -- Select users who are mutual friends but not already friends with the target user
+    SELECT f1.friend_id
+    FROM public.friendlist f1
+    WHERE f1.user_id IN (
+        SELECT f2.friend_id
+        FROM public.friendlist f2
+        WHERE f2.user_id = 24
+    )
+    AND f1.friend_id != 24
+    AND NOT EXISTS (
+        SELECT 1
+        FROM public.friendlist f3
+        WHERE f3.user_id = 24 AND f3.friend_id = f1.friend_id
+    )
+    UNION
+    -- Select users who share a group with the target user but are not already friends
+    SELECT m.user_id
+    FROM public.member m
+    WHERE m.group_id IN (
+        SELECT gm.group_id
+        FROM public.member gm
+        WHERE gm.user_id = 24
+    )
+    AND m.user_id != 24
+    AND NOT EXISTS (
+        SELECT 1
+        FROM public.friendlist f
+        WHERE (f.user_id = 24 AND f.friend_id = m.user_id)
+        OR (f.friend_id = 24 AND f.user_id = m.user_id)
+    )
+)
+AND u.user_id != 24

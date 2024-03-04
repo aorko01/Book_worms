@@ -37,4 +37,4 @@ async function searchBook(title) {
 }
 
 // Example usage
-searchBook('Viktor Frankl');
+searchBook('The Great Gatsby');

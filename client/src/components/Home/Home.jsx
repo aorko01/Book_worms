@@ -13,63 +13,77 @@ const Home = () => {
   const [reviewText, setReviewText] = useState("");
   const inputRef = useRef(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/Home", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        });
+  // Define fetchData as a standalone function
+  const fetchData = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/Home", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
 
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        setBooks(data.books);
-        setReviews(data.reviews);
-        setFriends(data.friends);
-        setGroups(data.groups);
-        setAllBooks(data.allBooks); // Assuming this endpoint also provides allBooks data
-      } catch (error) {
-        console.error("Error fetching data:", error);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
       }
-    };
+      const data = await response.json();
+      setBooks(data.books);
+      setReviews(data.reviews);
+      setFriends(data.friends);
+      setGroups(data.groups);
+      setAllBooks(data.allBooks);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
+  // useEffect to call fetchData on component mount
+  useEffect(() => {
     fetchData();
   }, []);
 
   const searchLocalBooks = (title) => {
-    return allBooks.filter(book =>
-      book.title.toLowerCase().includes(title.toLowerCase())
-    ).map(book => ({
-      id: book.book_id,
-      title: book.title,
-      authors: book.author_name,
-      coverUrl: book.cover_url || "../public/photo_2024-02-29_23-38-49.jpg",
-      genre: book.genre,
-      source: 'local',
-    }));
+    return allBooks
+      .filter((book) => book.title.toLowerCase().includes(title.toLowerCase()))
+      .map((book) => ({
+        id: book.book_id,
+        title: book.title,
+        authors: book.author_name,
+        coverUrl: book.cover_url || "../public/photo_2024-02-29_23-38-49.jpg",
+        genre: book.genre,
+        pageCount: book.page_count, // Include page count here
+        source: "local",
+      }));
   };
 
   const searchGoogleBooks = async (title) => {
-    const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${title}&maxResults=5`);
-    const data = await response.json();
+    try {
+      const response = await fetch(
+        `https://www.googleapis.com/books/v1/volumes?q=${title}&maxResults=5`
+      );
+      const data = await response.json();
 
-    if (!data.items) {
+      if (!data.items) {
+        return [];
+      }
+      
+
+      return data.items.map((item) => ({
+        id: item.id,
+        title: item.volumeInfo.title,
+        authors: item.volumeInfo.authors?.join(", ") || "Unknown Author",
+        coverUrl:
+          item.volumeInfo.imageLinks?.thumbnail ||
+          "../public/photo_2024-02-29_23-38-49.jpg",
+        genre: item.volumeInfo.categories?.join(", ") || "Genre not specified",
+        pageCount: item.volumeInfo.pageCount || 'Page count not available', // Adjust here for page count
+        source: "google",
+      }));
+    } catch (error) {
+      console.error("Error searching Google Books:", error);
       return [];
     }
-
-    return data.items.map((item) => ({
-      id: item.id,
-      title: item.volumeInfo.title,
-      authors: item.volumeInfo.authors?.join(", ") || "Unknown Author",
-      coverUrl: item.volumeInfo.imageLinks?.thumbnail || "../public/photo_2024-02-29_23-38-49.jpg",
-      genre: item.volumeInfo.categories?.join(", ") || "Genre not specified",
-      source: 'google',
-    }));
   };
 
   const handleInputChange = async (e) => {
@@ -97,23 +111,29 @@ const Home = () => {
   };
 
   const postReview = async () => {
-    const payload = selectedBook && selectedBook.source === 'local'
-      ? {
-          book_id: selectedBook.id,
-          review: reviewText,
-          audience: "public",
-        }
-      : {
-          title: bookNameInput,
-          author_name: selectedBook?.authors || "Unknown Author",
-          cover_url: selectedBook?.coverUrl || null,
-          genre: selectedBook?.genre || "Genre not specified",
-          page_count: null,
-          review: reviewText,
-          audience: "public",
-          book_id: null,
-      };
-  
+    // Determine if the book has a page count and is not a local book
+    const isGoogleBookWithPageCount = selectedBook && selectedBook.source === "google" && selectedBook.pageCount !== 'Page count not available';
+
+    const payload = selectedBook && selectedBook.source === "local"
+        ? {
+            // Local book payload
+            book_id: selectedBook.id,
+            review: reviewText,
+            audience: "public",
+            page_count: selectedBook.page_count, // Use page count for local books
+          }
+        : {
+            // Google Books API or manual entry payload
+            title: bookNameInput,
+            author_name: selectedBook?.authors || "Unknown Author",
+            cover_url: selectedBook?.coverUrl || null,
+            genre: selectedBook?.genre || "Genre not specified",
+            page_count: isGoogleBookWithPageCount ? selectedBook.pageCount : null, // Include page count for Google Books
+            review: reviewText,
+            audience: "public",
+            book_id: null,
+          };
+
     try {
       const response = await fetch("http://localhost:3000/post-review", {
         method: "POST",
@@ -121,30 +141,32 @@ const Home = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
-        credentials: 'include', // Ensure cookies, such as session tokens, are sent with the request
+        credentials: "include",
       });
-  
+
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-      const data = await response.json();
-      console.log("Review posted successfully:", data);
-      // Reset states or give feedback to the user here
+      await fetchData(); // Call fetchData again to refresh the data on the page
+      // Optionally, reset any states related to the review form here
       setReviewText("");
       setBookNameInput("");
       setSelectedBook(null);
+      setSuggestions([]);
+      // Additional code for handling the response and resetting state
     } catch (error) {
       console.error("Error posting review:", error);
     }
   };
-  
+
+
   return (
     <div className="bg-gray-900 text-white min-h-screen">
       <NavigationBar />
 
       <div className="flex justify-between my-10 mx-10 pt-[4rem]">
         <div className="w-1/4 pr-4 border-r border-gray-700">
-          <h2 className="text-3xl font-semibold mb-7">Available Books</h2>
+          <h2 className="text-4xl font-semibold mb-7">Available Books</h2>
           {books.map((book) => (
             <div
               className="bg-gray-800 p-4 mb-4 rounded-lg shadow-lg flex flex-col items-center"
@@ -167,49 +189,52 @@ const Home = () => {
               <div className="mb-2 flex justify-center text-lg">
                 {book.genre}
               </div>
+              <div className="mb-2 flex justify-center text-lg">
+                Pages: {book.page_count}
+              </div>
             </div>
           ))}
         </div>
 
         <div className="w-1/2 px-4">
-          <h2 className="text-3xl font-semibold mb-7">Write Review</h2>
+          <h2 className="text-4xl font-semibold mb-7">Write Review</h2>
           <div className="mb-4 p-6 bg-gray-800 rounded-lg shadow-lg">
-          <input
-          type="text"
-          placeholder="Book Name"
-          className="bg-gray-700 text-white rounded-xl px-4 py-2 focus:outline-none focus:bg-gray-600 mb-5 w-full"
-          value={bookNameInput}
-          onChange={handleInputChange}
-          ref={inputRef}
-        />
-        {suggestions.length > 0 && (
-          <ul className="bg-gray-700 text-white rounded-xl">
-            {suggestions.map((suggestion) => (
-              <li
-                key={suggestion.id}
-                className="p-2 hover:bg-gray-600 cursor-pointer"
-                onClick={() => handleSuggestionClick(suggestion)}
-              >
-                {suggestion.title}
-              </li>
-            ))}
-          </ul>
-        )}
-        <textarea
-          placeholder="Write your review here..."
-          className="w-full bg-gray-700 text-white rounded-xl px-4 py-2 focus:outline-none focus:bg-gray-600 mb-5"
-          value={reviewText}
-          onChange={(e) => setReviewText(e.target.value)}
-          style={{ minHeight: "100px" }}
-        ></textarea>
-        <button
-          className="w-full bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-xl transition duration-300 ease-in-out"
-          onClick={postReview}
-        >
-          Post Review
-        </button>
+            <input
+              type="text"
+              placeholder="Book Name"
+              className="bg-gray-700 text-white rounded-xl px-4 py-2 focus:outline-none focus:bg-gray-600 mb-5 w-full"
+              value={bookNameInput}
+              onChange={handleInputChange}
+              ref={inputRef}
+            />
+            {suggestions.length > 0 && (
+              <ul className="bg-gray-700 text-white rounded-xl">
+                {suggestions.map((suggestion) => (
+                  <li
+                    key={suggestion.id}
+                    className="p-2 hover:bg-gray-600 cursor-pointer"
+                    onClick={() => handleSuggestionClick(suggestion)}
+                  >
+                    {suggestion.title}
+                  </li>
+                ))}
+              </ul>
+            )}
+            <textarea
+              placeholder="Write your review here..."
+              className="w-full bg-gray-700 text-white rounded-xl px-4 py-2 focus:outline-none focus:bg-gray-600 mb-5"
+              value={reviewText}
+              onChange={(e) => setReviewText(e.target.value)}
+              style={{ minHeight: "100px" }}
+            ></textarea>
+            <button
+              className="w-full bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-xl transition duration-300 ease-in-out"
+              onClick={postReview}
+            >
+              Post Review
+            </button>
           </div>
-          <h2 className="text-3xl font-semibold mb-7 mt-8">Review Section</h2>
+          <h2 className="text-4xl font-semibold mb-7 mt-8">Review Section</h2>
 
           {reviews.map((review) => (
             <div className="mt-8" key={review.review_id}>
@@ -268,7 +293,7 @@ const Home = () => {
         </div>
 
         <div className="w-1/5 pl-4 border-l border-gray-700">
-          <h2 className="text-3xl font-semibold mb-6">Chat List</h2>
+          <h2 className="text-4xl font-semibold mb-6">Chat List</h2>
         </div>
       </div>
     </div>
