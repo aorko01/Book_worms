@@ -1,40 +1,25 @@
-const axios = require('axios');
+async function fetchBooksByAuthor(authorName) {
+  const apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
+  const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=+inauthor:${encodeURIComponent(authorName)}&key=${apiKey}`;
 
-// Function to search for a book by its title
-async function searchBook(title) {
   try {
-    const response = await axios.get('https://www.googleapis.com/books/v1/volumes', {
-      params: {
-        q: title,
-        maxResults: 1 , // Limiting to 1 result for simplicity, you can adjust as needed
-      },
-    });
+    const response = await fetch(apiUrl);
+    const data = await response.json();
 
-    const bookData = response.data.items[0]; // Get the first book from the response
+    const books = data.items.map(item => ({
+      title: item.volumeInfo.title,
+      authors: item.volumeInfo.authors || ['Unknown'],
+      publishedDate: item.volumeInfo.publishedDate,
+      thumbnail: item.volumeInfo.imageLinks?.thumbnail || 'No image available',
+      infoLink: item.volumeInfo.infoLink
+    }));
 
-    if (!bookData) {
-      console.log('Book not found');
-      return;
-    }
-
-    const bookInfo = {
-      title: bookData.volumeInfo.title,
-      authors: bookData.volumeInfo.authors,
-      coverUrl: bookData.volumeInfo.imageLinks?.thumbnail || 'No cover available',
-      genre: bookData.volumeInfo.categories || ['Genre not specified'],
-      pageCount: bookData.volumeInfo.pageCount || 'Page count not available',
-    };
-
-    console.log('Book Information:');
-    console.log('Title:', bookInfo.title);
-    console.log('Authors:', bookInfo.authors.join(', '));
-    console.log('Cover URL:', bookInfo.coverUrl);   
-    console.log('Genre:', bookInfo.genre.join(', '));
-    console.log('Page Count:', bookInfo.pageCount);
+    console.log(books);
+    return books;
   } catch (error) {
-    console.error('Error fetching book information:', error.message);
+    console.error("Failed to fetch books: ", error);
   }
 }
 
 // Example usage
-searchBook('The Great Gatsby');
+fetchBooksByAuthor('J.K. Rowling');

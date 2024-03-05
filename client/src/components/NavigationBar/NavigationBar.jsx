@@ -60,6 +60,11 @@ const NavigationBar = () => {
         <div className="flex justify-center flex-grow">
           <ul className="flex space-x-8">
             <li>
+              <NavLink to="/home" className={({ isActive }) => isActive ? "text-orange-700" : "text-white"}>
+                Home
+              </NavLink>
+            </li>
+            <li>
               <NavLink to="/books" className={({ isActive }) => isActive ? "text-orange-700" : "text-white"}>
                 Books
               </NavLink>

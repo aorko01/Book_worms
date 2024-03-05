@@ -6,6 +6,7 @@ const Home = () => {
   const [reviews, setReviews] = useState([]);
   const [friends, setFriends] = useState([]);
   const [groups, setGroups] = useState([]);
+  const suggestionsRef = useRef(null);
   const [allBooks, setAllBooks] = useState([]);
   const [bookNameInput, setBookNameInput] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -236,10 +237,10 @@ const Home = () => {
               className="w-full bg-gray-700 text-white rounded-xl px-4 py-2 focus:outline-none focus:bg-gray-600 mb-5"
               value={reviewText}
               onChange={(e) => setReviewText(e.target.value)}
-              style={{ minHeight: "100px" }}
+              style={{ minHeight: "130px" }}
             ></textarea>
             <button
-              className="w-full bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-xl transition duration-300 ease-in-out"
+              className="w-full bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-xl transition duration-300 ease-in-out transform hover:scale-105"
               onClick={postReview}
             >
               Post Review

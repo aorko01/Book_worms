@@ -23,7 +23,7 @@ app.use("/auth", require('./routes/jwtAuth'));
 
 app.use("/Home", require('./routes/home'));
 
-app.use("search",require('./routes/search'));
+app.use("/search",require('./routes/search'));
 
 app.use("/books-all", require('./routes/booksAll'));
 

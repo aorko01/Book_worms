@@ -8,6 +8,7 @@ const LoginPage = () => {
   const [typedLoremText, setTypedLoremText] = useState('');
   const introTextToType = " Good Day!";
   const loremTextToType = "H appiness and Books are worth sharing...";
+  const [loginError, setLoginError] = useState('');
 
   // Create an instance of useNavigate
   const navigate = useNavigate();
@@ -42,6 +43,7 @@ const LoginPage = () => {
 
   const handleLogin = async(e) => {
     e.preventDefault();
+    setLoginError(''); // Reset login error message on new login attempt
     try {
       const response = await fetch('http://localhost:3000/auth/login', {
         method: 'POST',
@@ -52,18 +54,17 @@ const LoginPage = () => {
         body: JSON.stringify({ email_address: email, password: password })
       });
 
-      console.log(response);
-
       if (response.status === 200) {
         const parseRes = await response.json();
         console.log(parseRes);
         navigate('/home'); // Navigate to /home if the login is successful
       } else {
-        
-        console.error('Login failed');
+        // Update login error message based on the response or a default message
+        setLoginError('Please check your email and password.');
       }
     } catch (error) {
       console.error(error.message);
+      setLoginError('An error occurred during login. Please try again.');
     }
   };
 
@@ -79,8 +80,9 @@ const LoginPage = () => {
         <p className="text-xl mb-4">{typedIntroText}</p>
         <p className="text-lg">{typedLoremText}</p>
       </div>
-      <div className="bg-gray-700 p-8 rounded-xl shadow-md">
+      <div className="bg-gray-700 p-8 rounded-xl shadow-md w-80">
         <h2 className="text-2xl font-mono font-bold mb-4">Login</h2>
+        {loginError && <p className="text-red-500 text-md  rounded-xl mb-4">{loginError}</p>}
         <div className="mb-4">
           <label className="block text-gray-400 text-sm font-bold mb-2" htmlFor="email">
             Email
@@ -107,7 +109,7 @@ const LoginPage = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <div className="flex justify-between">
+        <div className="flex justify-between mt-10">
           <button
             className="bg-blue-500 
             rounded-xl hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
