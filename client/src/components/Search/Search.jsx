@@ -35,6 +35,29 @@ function Search() {
     }
   }, [searchText]);
 
+  const handleSendFriendRequest = async (toUserId) => {
+    try {
+      const response = await fetch("http://localhost:3000/send-request", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ to_id: toUserId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send friend request");
+      }
+
+      const responseData = await response.json();
+      alert(responseData.message);
+      // Optionally, update the state or UI to reflect the change without reloading
+    } catch (error) {
+      console.error("Error sending friend request:", error);
+    }
+  };
+
   return (
     <div className="bg-gray-900 text-white min-h-screen flex">
       <NavigationBar />
@@ -71,7 +94,10 @@ function Search() {
                         <p>{user.email_address}</p>
                       </div>
                       <div className="mt-5 flex gap-2">
-                        <button className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-1 px-2 rounded">
+                        <button
+                          className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-1 px-2 rounded"
+                          onClick={() => handleSendFriendRequest(user.user_id)}
+                        >
                           Add Friend
                         </button>
                         <button className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-2 rounded">
@@ -83,6 +109,7 @@ function Search() {
                 </div>
               </div>
             )}
+
             {/* Books Section */}
             {results.books.length > 0 && (
               <div className="my-8">
@@ -95,7 +122,9 @@ function Search() {
                     >
                       <img
                         className="rounded-lg mb-2"
-                        src={book.cover_url || "https://via.placeholder.com/150"}
+                        src={
+                          book.cover_url || "https://via.placeholder.com/150"
+                        }
                         alt={book.title}
                         style={{ width: "80%" }}
                       />
@@ -118,7 +147,9 @@ function Search() {
             )}
             {/* Show "No matches found" message if both users and books arrays are empty */}
             {results.users.length === 0 && results.books.length === 0 && (
-              <div className="text-2xl font-semibold text-red-500">No matches found</div>
+              <div className="text-2xl font-semibold text-red-500">
+                No matches found
+              </div>
             )}
           </div>
         </div>

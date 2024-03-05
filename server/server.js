@@ -3,7 +3,6 @@ const cookieParser=require('cookie-parser');
 const express=require('express');
 const app = express();
 const port = 3000;
-require('dotenv').config();
 
 const cors = require('cors');
 
@@ -29,9 +28,17 @@ app.use("/books-all", require('./routes/booksAll'));
 
 app.use("/logout", require('./routes/logout'));
 
+app.use("/reject-request", require('./routes/rejectrequest'));
+
+app.use("/send-request", require('./routes/sendrequest'));
+
 
 
 app.use("/post-review", require('./routes/postReview'));
+
+app.use("/add-friend", require('./routes/addasfriend'));
+
+app.use("/addbook",require('./routes/addBook'));
 
 // app.use("/increase-upvotes", require('./routes/increaseUpvotes'));
 
