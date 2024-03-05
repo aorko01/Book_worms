@@ -11,6 +11,7 @@ const Home = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
   const [reviewText, setReviewText] = useState("");
+  const [audience, setAudience] = useState("public");
   const inputRef = useRef(null);
 
   // Define fetchData as a standalone function
@@ -116,21 +117,19 @@ const Home = () => {
 
     const payload = selectedBook && selectedBook.source === "local"
         ? {
-            // Local book payload
             book_id: selectedBook.id,
             review: reviewText,
-            audience: "public",
-            page_count: selectedBook.page_count, // Use page count for local books
+            audience: audience, // Update this line to include the audience
+            page_count: selectedBook.page_count,
           }
         : {
-            // Google Books API or manual entry payload
             title: bookNameInput,
             author_name: selectedBook?.authors || "Unknown Author",
             cover_url: selectedBook?.coverUrl || null,
             genre: selectedBook?.genre || "Genre not specified",
-            page_count: isGoogleBookWithPageCount ? selectedBook.pageCount : null, // Include page count for Google Books
+            page_count: isGoogleBookWithPageCount ? selectedBook.pageCount : null,
             review: reviewText,
-            audience: "public",
+            audience: audience, // Update this line to include the audience
             book_id: null,
           };
 
@@ -207,6 +206,15 @@ const Home = () => {
               onChange={handleInputChange}
               ref={inputRef}
             />
+            <select
+              value={audience}
+              onChange={(e) => setAudience(e.target.value)}
+              className="bg-gray-700 text-white rounded-xl px-4 py-2 mb-5 w-full cursor-pointer"
+            >
+              <option value="public">Public</option>
+              <option value="friends">Friends</option>
+              <option value="group">Group</option>
+            </select>
             {suggestions.length > 0 && (
               <ul className="bg-gray-700 text-white rounded-xl">
                 {suggestions.map((suggestion) => (
