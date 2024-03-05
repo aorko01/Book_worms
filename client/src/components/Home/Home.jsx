@@ -198,10 +198,11 @@ const Home = () => {
         <div className="w-1/2 px-4">
           <h2 className="text-4xl font-semibold mb-7">Write Review</h2>
           <div className="mb-4 p-6 bg-gray-800 rounded-lg shadow-lg">
+            <div className="flex justify-center mb-5 w-full">
             <input
               type="text"
               placeholder="Book Name"
-              className="bg-gray-700 text-white rounded-xl px-4 py-2 focus:outline-none focus:bg-gray-600 mb-5 w-full"
+              className="bg-gray-700 text-white rounded-xl px-4 py-2 focus:outline-none focus:bg-gray-600 w-3/4"
               value={bookNameInput}
               onChange={handleInputChange}
               ref={inputRef}
@@ -209,12 +210,14 @@ const Home = () => {
             <select
               value={audience}
               onChange={(e) => setAudience(e.target.value)}
-              className="bg-gray-700 text-white rounded-xl px-4 py-2 mb-5 w-full cursor-pointer"
+              className="ml-2 bg-gray-700 text-white rounded-xl px-4 py-2 w-1/4"
             >
               <option value="public">Public</option>
               <option value="friends">Friends</option>
               <option value="group">Group</option>
             </select>
+            </div>
+            
             {suggestions.length > 0 && (
               <ul className="bg-gray-700 text-white rounded-xl">
                 {suggestions.map((suggestion) => (
