@@ -1,100 +1,120 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 const NavigationBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [bookName, setBookName] = useState("");
   const [bookSuggestions, setBookSuggestions] = useState([]);
   const navigate = useNavigate();
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
 
   const handleSearchChange = (event) => {
     setSearchText(event.target.value);
   };
 
-  const handleBookNameChange = async (event) => {
-    const bookNameInput = event.target.value;
-    setBookName(bookNameInput);
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      navigate(`/search?query=${encodeURIComponent(searchText)}`);
+    }
+  };
 
-    if (!bookNameInput.trim()) {
+  const handleBookSearchChange = async (event) => {
+    const query = event.target.value;
+
+    if (!query.trim()) {
       setBookSuggestions([]);
       return;
     }
 
     try {
       const response = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-          bookNameInput
-        )}&maxResults=5`
+        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=5`
       );
       const data = await response.json();
       setBookSuggestions(data.items || []);
     } catch (error) {
-      console.error("Error fetching book data:", error);
+      console.error("Error fetching book suggestions:", error);
+      setBookSuggestions([]);
     }
   };
 
   const handleAddBook = async (book) => {
-    // Modify this part to match the structure of your API and database
     const payload = {
       title: book.volumeInfo.title,
-      author_name: book.volumeInfo.authors?.join(", "),
+      author_name: book.volumeInfo.authors?.join(", ") || "Unknown Author",
       cover_url: book.volumeInfo.imageLinks?.thumbnail,
-      genre: book.volumeInfo.categories?.join(", "),
+      genre: book.volumeInfo.categories?.join(", ") || "Unknown Genre",
       page_count: book.volumeInfo.pageCount,
     };
 
     try {
-      const response = await fetch('http://localhost:3000/addbook', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3000/addbook", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        credentials: 'include',
         body: JSON.stringify(payload),
+        credentials: "include",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to add book');
+        throw new Error("Failed to add book");
       }
 
       const responseData = await response.json();
-      alert('Book added successfully');
+      alert("Book added successfully: " + responseData.message);
+      // Resetting book search and suggestions after successful addition
+      setBookSuggestions([]);
     } catch (error) {
-      console.error('Error adding book:', error);
+      console.error("Error adding book:", error);
     }
   };
 
   return (
-    // Existing navigation code...
-    // Dropdown for Add/Delete Book
-    {isDropdownOpen && (
-      <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-1 text-black">
-        <input
-          type="text"
-          placeholder="Add Book Name"
-          className="block w-full text-black px-4 py-2"
-          value={bookName}
-          onChange={handleBookNameChange}
-        />
-        {bookSuggestions.map((book) => (
-          <div
-            key={book.id}
-            className="flex justify-between items-center px-4 py-2 hover:bg-gray-200 cursor-pointer"
-            onClick={() => handleAddBook(book)}
+    <nav className="bg-gray-800 text-white rounded-3xl p-4" style={{ position: "fixed", width: "100%", top: 0, zIndex: 1000 }}>
+      <div className="flex justify-between items-center">
+        <div>
+          <input
+            type="text"
+            placeholder="Search..."
+            className="bg-gray-700 text-white rounded-xl px-4 py-2 focus:outline-none focus:bg-gray-600"
+            value={searchText}
+            onChange={handleSearchChange}
+            onKeyDown={handleKeyDown}
+          />
+        </div>
+        <div className="flex items-center">
+          {/* Other navigation links */}
+          <button
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
-            {book.volumeInfo.title}
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
-              Add
-            </button>
-          </div>
-        ))}
+            Add/Delete Book
+          </button>
+          {isDropdownOpen && (
+            <div className="absolute mt-12 right-0 w-96 bg-white text-black rounded-lg shadow-lg p-4">
+              <input
+                type="text"
+                placeholder="Type book name..."
+                className="w-full p-2 mb-4 text-black"
+                onChange={handleBookSearchChange}
+              />
+              {bookSuggestions.map((book) => (
+                <div
+                  key={book.id}
+                  className="flex justify-between items-center p-2 hover:bg-gray-200 cursor-pointer"
+                  onClick={() => handleAddBook(book)}
+                >
+                  {book.volumeInfo.title}
+                  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
+                    Add
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    )}
+    </nav>
   );
 };
 
