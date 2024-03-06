@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import NavigationBar from "../NavigationBar/NavigationBar";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [books, setBooks] = useState([]);
@@ -14,6 +15,10 @@ const Home = () => {
   const [reviewText, setReviewText] = useState("");
   const [audience, setAudience] = useState("public");
   const inputRef = useRef(null);
+  const navigate = useNavigate();
+  const handleGetBookClick = (bookId) => {
+    navigate(`/individual-book/${bookId}`);
+  };
 
   // Define fetchData as a standalone function
   const fetchData = async () => {
@@ -69,7 +74,6 @@ const Home = () => {
       if (!data.items) {
         return [];
       }
-      
 
       return data.items.map((item) => ({
         id: item.id,
@@ -79,7 +83,7 @@ const Home = () => {
           item.volumeInfo.imageLinks?.thumbnail ||
           "../public/photo_2024-02-29_23-38-49.jpg",
         genre: item.volumeInfo.categories?.join(", ") || "Genre not specified",
-        pageCount: item.volumeInfo.pageCount || 'Page count not available', // Adjust here for page count
+        pageCount: item.volumeInfo.pageCount || "Page count not available", // Adjust here for page count
         source: "google",
       }));
     } catch (error) {
@@ -114,9 +118,13 @@ const Home = () => {
 
   const postReview = async () => {
     // Determine if the book has a page count and is not a local book
-    const isGoogleBookWithPageCount = selectedBook && selectedBook.source === "google" && selectedBook.pageCount !== 'Page count not available';
+    const isGoogleBookWithPageCount =
+      selectedBook &&
+      selectedBook.source === "google" &&
+      selectedBook.pageCount !== "Page count not available";
 
-    const payload = selectedBook && selectedBook.source === "local"
+    const payload =
+      selectedBook && selectedBook.source === "local"
         ? {
             book_id: selectedBook.id,
             review: reviewText,
@@ -128,7 +136,9 @@ const Home = () => {
             author_name: selectedBook?.authors || "Unknown Author",
             cover_url: selectedBook?.coverUrl || null,
             genre: selectedBook?.genre || "Genre not specified",
-            page_count: isGoogleBookWithPageCount ? selectedBook.pageCount : null,
+            page_count: isGoogleBookWithPageCount
+              ? selectedBook.pageCount
+              : null,
             review: reviewText,
             audience: audience, // Update this line to include the audience
             book_id: null,
@@ -158,7 +168,6 @@ const Home = () => {
       console.error("Error posting review:", error);
     }
   };
-
 
   return (
     <div className="bg-gray-900 text-white min-h-screen">
@@ -192,6 +201,12 @@ const Home = () => {
               <div className="mb-2 flex justify-center text-lg">
                 Pages: {book.page_count}
               </div>
+              <button
+                className="bg-green-500 hover:bg--700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-2"
+                onClick={() => handleGetBookClick(book.book_id)}
+              >
+                Get This Book
+              </button>
             </div>
           ))}
         </div>
@@ -200,25 +215,25 @@ const Home = () => {
           <h2 className="text-4xl font-semibold mb-7">Write Review</h2>
           <div className="mb-4 p-6 bg-gray-800 rounded-lg shadow-lg">
             <div className="flex justify-center mb-5 w-full">
-            <input
-              type="text"
-              placeholder="Book Name"
-              className="bg-gray-700 text-white rounded-xl px-4 py-2 focus:outline-none focus:bg-gray-600 w-3/4"
-              value={bookNameInput}
-              onChange={handleInputChange}
-              ref={inputRef}
-            />
-            <select
-              value={audience}
-              onChange={(e) => setAudience(e.target.value)}
-              className="ml-2 bg-gray-700 text-white rounded-xl px-4 py-2 w-1/4"
-            >
-              <option value="public">Public</option>
-              <option value="friends">Friends</option>
-              <option value="group">Group</option>
-            </select>
+              <input
+                type="text"
+                placeholder="Book Name"
+                className="bg-gray-700 text-white rounded-xl px-4 py-2 focus:outline-none focus:bg-gray-600 w-3/4"
+                value={bookNameInput}
+                onChange={handleInputChange}
+                ref={inputRef}
+              />
+              <select
+                value={audience}
+                onChange={(e) => setAudience(e.target.value)}
+                className="ml-2 bg-gray-700 text-white rounded-xl px-4 py-2 w-1/4"
+              >
+                <option value="public">Public</option>
+                <option value="friends">Friends</option>
+                <option value="group">Group</option>
+              </select>
             </div>
-            
+
             {suggestions.length > 0 && (
               <ul className="bg-gray-700 text-white rounded-xl">
                 {suggestions.map((suggestion) => (

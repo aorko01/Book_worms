@@ -14,6 +14,7 @@ import Groups from "./components/Groups/Groups";
 import AddBook from "./components/AddBook/AddBook";
 import Profile from "./components/Profile/Profile";
 import Search from "./components/Search/Search";
+import IndividualBook from "./components/IndividualBook/IndividualBook";
 const App = () => {
 
 
@@ -29,6 +30,7 @@ const App = () => {
         <Route path="/add-book" element={<AddBook />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/search" element={<Search />} />
+        <Route path="/individual-book/:bookId" element={<IndividualBook />} />
       </Routes>
     </Router>
   );

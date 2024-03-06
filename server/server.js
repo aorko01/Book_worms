@@ -48,6 +48,8 @@ app.use("/addbook",require('./routes/addBook'));
 
 app.use("/friends", require('./routes/friends'));
 
+app.use("/individual-book", require('./routes/getIndividualBook'));
+
 // app.use("groups", require('./routes/groups'));
 
 // app.use("add-book", require('./routes/addBook'));
