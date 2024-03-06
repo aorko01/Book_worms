@@ -4,6 +4,7 @@ const authorization = require("../middleware/authorization");
 
 router.post("/", authorization, async (req, res) => {
   const userId = req.user; // Assuming this is the owner_id for bookcopy
+  console.log("hit add book route");
   const { title, author_name, genre, page_count, cover_url } = req.body;
 
   try {

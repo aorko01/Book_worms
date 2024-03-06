@@ -70,6 +70,12 @@ const NavigationBar = () => {
     }
   };
 
+  const handleSuggestionClick = (suggestion) => {
+    setBookNameInput(suggestion.title);
+    setSelectedBook(suggestion);
+    setSuggestions([]);
+  };
+
   const searchLocalBooks = (title) => {
     return allBooks
       .filter((book) => book.title.toLowerCase().includes(title.toLowerCase()))
@@ -117,6 +123,52 @@ const NavigationBar = () => {
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       navigate(`/search?query=${encodeURIComponent(searchText)}`);
+    }
+  };
+
+  const AddBook = async () => {
+    // Determine if the book has a page count and is not a local book
+    const isGoogleBookWithPageCount = selectedBook && selectedBook.source === "google" && selectedBook.pageCount !== 'Page count not available';
+
+    const payload = selectedBook && selectedBook.source === "local"
+        ? {
+            book_id: selectedBook.id,
+
+            audience: audience, // Update this line to include the audience
+
+          }
+        : {
+            title: bookNameInput,
+            author_name: selectedBook?.authors || "Unknown Author",
+            cover_url: selectedBook?.coverUrl || null,
+            genre: selectedBook?.genre || "Genre not specified",
+            page_count: isGoogleBookWithPageCount ? selectedBook.pageCount : null,
+            audience: audience, // Update this line to include the audience
+            book_id: null,
+          };
+
+    try {
+      const response = await fetch("http://localhost:3000/addbook", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      await fetchData(); // Call fetchData again to refresh the data on the page
+      // Optionally, reset any states related to the review form here
+      // setReviewText("");
+      setBookNameInput("");
+      setSelectedBook(null);
+      setSuggestions([]);
+      // Additional code for handling the response and resetting state
+    } catch (error) {
+      console.error("Error posting review:", error);
     }
   };
 
@@ -224,7 +276,7 @@ const NavigationBar = () => {
                   <div
                     onClick={() => setIsswitch(!isswitch)}
                     className={`flex w-12 h-6 items-center rounded-full p-1 cursor-pointer ${
-                      isswitch ? "bg-green-500" : "bg-gray-600"
+                      isswitch ? "bg-green-500" : "bg-red-500"
                     }`}
                   >
                     <span
@@ -269,7 +321,9 @@ const NavigationBar = () => {
                         <option value="public">Public</option>
                       </select>
                     </div>
-                    <button className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl w-3/4 transition duration-300 ease-in-out mb-5">
+                    <button className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl w-3/4 transition duration-300 ease-in-out mb-5"
+                    onClick={AddBook}
+                    >
                       Add Book
                     </button>
                   </div>
