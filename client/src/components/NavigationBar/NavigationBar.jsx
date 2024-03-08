@@ -6,6 +6,7 @@ const NavigationBar = () => {
   const [searchText, setSearchText] = useState("");
   const [isDropdownOpen_for_add_book, setIsDropdownOpen__for_add_book] =
     useState(false);
+  const [isNotification, setIsNotification] = useState(false);
   const [isswitch, setIsswitch] = useState(true);
   const [allBooks, setAllBooks] = useState([]);
   const [bookNameInput, setBookNameInput] = useState("");
@@ -116,6 +117,10 @@ const NavigationBar = () => {
     setIsDropdownOpen__for_add_book(!isDropdownOpen_for_add_book);
   };
 
+  const toggleNotificaion = () => {
+    setIsNotification(!isNotification);
+  };
+
   const handleSearchChange = (event) => {
     setSearchText(event.target.value);
   };
@@ -128,20 +133,25 @@ const NavigationBar = () => {
 
   const AddBook = async () => {
     // Determine if the book has a page count and is not a local book
-    const isGoogleBookWithPageCount = selectedBook && selectedBook.source === "google" && selectedBook.pageCount !== 'Page count not available';
+    const isGoogleBookWithPageCount =
+      selectedBook &&
+      selectedBook.source === "google" &&
+      selectedBook.pageCount !== "Page count not available";
 
-    const payload = selectedBook && selectedBook.source === "local"
+    const payload =
+      selectedBook && selectedBook.source === "local"
         ? {
             book_id: selectedBook.id,
             audience: audience, // Update this line to include the audience
-
           }
         : {
             title: bookNameInput,
             author_name: selectedBook?.authors || "Unknown Author",
             cover_url: selectedBook?.coverUrl || null,
             genre: selectedBook?.genre || "Genre not specified",
-            page_count: isGoogleBookWithPageCount ? selectedBook.pageCount : null,
+            page_count: isGoogleBookWithPageCount
+              ? selectedBook.pageCount
+              : null,
             audience: audience, // Update this line to include the audience
             book_id: null,
           };
@@ -248,14 +258,30 @@ const NavigationBar = () => {
           </ul>
         </div>
         <div className="flex items-center">
-          <NavLink
-            to="/notifications"
-            className={({ isActive }) =>
-              isActive ? "text-orange-700 mr-4" : "text-white mr-4"
-            }
-          >
-            Notifications
-          </NavLink>
+          <div className="relative mr-4">
+            <button className="text-white" onClick={toggleNotificaion}>
+              Notification
+            </button>
+            {isNotification && (
+              <div className="absolute left-0 mt-2 w-72 bg-gray-700 bg-opacity-90 rounded-xl shadow-lg py-1 text-white flex flex-col items-center px-4">
+                <div className="w-full flex justify-between items-center">
+                  <div className="text-lg font-bold">Notifications</div>
+                </div>
+                {/* Dummy notifications */}
+                <ul className="w-full mt-4 flex flex-col items-start">
+                  <li className="p-2 hover:bg-gray-600 cursor-pointer">
+                    Notification 1
+                  </li>
+                  <li className="p-2 hover:bg-gray-600 cursor-pointer">
+                    Notification 2
+                  </li>
+                  <li className="p-2 hover:bg-gray-600 cursor-pointer">
+                    Notification 3
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
           <div className="relative mr-4">
             <button
               className="text-white"
@@ -320,8 +346,9 @@ const NavigationBar = () => {
                         <option value="public">Public</option>
                       </select>
                     </div>
-                    <button className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl w-3/4 transition duration-300 ease-in-out mb-5"
-                    onClick={AddBook}
+                    <button
+                      className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl w-3/4 transition duration-300 ease-in-out mb-5"
+                      onClick={AddBook}
                     >
                       Add Book
                     </button>

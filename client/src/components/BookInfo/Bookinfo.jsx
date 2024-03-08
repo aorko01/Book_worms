@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import NavigationBar from "../NavigationBar/NavigationBar";
 
 function Bookinfo() {
@@ -15,7 +16,10 @@ function Bookinfo() {
     String.fromCharCode(65 + i)
   );
   const bookRefs = useRef({});
-
+  const navigate = useNavigate();
+  const handleGetBookClick = (bookId) => {
+    navigate(`/individual-book/${bookId}`);
+  };
   useEffect(() => {
     const fetchBooks = async () => {
       try {
@@ -185,6 +189,12 @@ function Bookinfo() {
                     <div className="text-lg">{book.genre}</div>
                     <div className="text-lg">Pages: {book.page_count}</div>{" "}
                     {/* Display page_count here */}
+                    <button
+                      className="bg-violet-500 hover:bg--700 text-white font-bold py-2 px-4 rounded-xl focus:outline-none focus:shadow-outline mt-2"
+                      onClick={() => handleGetBookClick(book.book_id)}
+                    >
+                      About this Book
+                    </button>
                   </div>
                 ))}
               </div>
