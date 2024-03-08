@@ -13,6 +13,21 @@ const NavigationBar = () => {
   const [selectedBook, setSelectedBook] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
   const [audience, setAudience] = useState("public");
+  const [bookRequests, setBookRequests] = useState([]);
+
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleRequestClick = (request) => {
+    setSelectedRequest(request);
+    setShowModal(true);
+    setIsNotification(false);
+  };
+
+  const handleModalClose = () => {
+    setSelectedRequest(null);
+    setShowModal(false);
+  };
 
   const navigate = useNavigate();
 
@@ -38,9 +53,32 @@ const NavigationBar = () => {
     }
   };
 
+  const fetchBookRequests = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/book-requests", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+
+      setBookRequests(data.bookRequests);
+      console.log("Book requests fetched:", data.bookRequests);
+    } catch (error) {
+      console.error("Error fetching book requests:", error);
+    }
+  };
+
   // useEffect to call fetchData on component mount
   useEffect(() => {
     fetchData();
+    fetchBookRequests();
   }, []);
 
   const searchGoogleBooks = async (title) => {
@@ -263,25 +301,25 @@ const NavigationBar = () => {
               Notification
             </button>
             {isNotification && (
-              <div className="absolute left-0 mt-2 w-72 bg-gray-700 bg-opacity-90 rounded-xl shadow-lg py-1 text-white flex flex-col items-center px-4">
+              <div className="absolute left-0 mt-2 w-72 bg-gray-700 rounded-xl shadow-lg py-1 text-white flex flex-col items-center px-4">
                 <div className="w-full flex justify-between items-center">
                   <div className="text-lg font-bold">Notifications</div>
                 </div>
-                {/* Dummy notifications */}
                 <ul className="w-full mt-4 flex flex-col items-start">
-                  <li className="p-2 hover:bg-gray-600 cursor-pointer">
-                    Notification 1
-                  </li>
-                  <li className="p-2 hover:bg-gray-600 cursor-pointer">
-                    Notification 2
-                  </li>
-                  <li className="p-2 hover:bg-gray-600 cursor-pointer">
-                    Notification 3
-                  </li>
+                  {bookRequests.map((request) => (
+                    <li
+                      key={request.borrow_days}
+                      className="p-2 hover:bg-gray-600 cursor-pointer text-lg border-2 border-gray-600 w-full"
+                      onClick={() => handleRequestClick(request)}
+                    >
+                      {`Request for ${request.title} from ${request.last_name} ${request.borrow_days} days`}
+                    </li>
+                  ))}
                 </ul>
               </div>
             )}
           </div>
+
           <div className="relative mr-4">
             <button
               className="text-white"
@@ -392,6 +430,38 @@ const NavigationBar = () => {
           </div>
         </div>
       </div>
+      {showModal && selectedRequest && (
+        <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-gray-700 rounded-lg p-8">
+            <h2 className="text-xl font-bold mb-4">Book Request</h2>
+            <p>{`${selectedRequest.first_name} ${selectedRequest.last_name} is asking for "${selectedRequest.title}" book.`}</p>
+            <div className="mt-4 flex justify-end">
+              <button
+                className="bg-green-500 text-white px-4 py-2 rounded-md mr-2"
+                onClick={() => {
+                  // Handle accept request action
+                  // Example: Accept the request and close modal
+                  // You can implement your logic here
+                  handleModalClose();
+                }}
+              >
+                Accept
+              </button>
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded-md"
+                onClick={() => {
+                  // Handle decline request action
+                  // Example: Decline the request and close modal
+                  // You can implement your logic here
+                  handleModalClose();
+                }}
+              >
+                Decline
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

@@ -42,6 +42,8 @@ app.use("/addbook",require('./routes/addBook'));
 
 app.use("/borrowrequest", require('./routes/borrowrequest'));
 
+app.use("/book-requests", require('./routes/getNotification'));
+
 // app.use("/increase-upvotes", require('./routes/increaseUpvotes'));
 
 // app.use("/post-comment", require('./routes/postComment'));
