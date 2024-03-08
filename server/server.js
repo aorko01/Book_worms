@@ -40,6 +40,8 @@ app.use("/add-friend", require('./routes/addasfriend'));
 
 app.use("/addbook",require('./routes/addBook'));
 
+app.use("/borrowrequest", require('./routes/borrowrequest'));
+
 // app.use("/increase-upvotes", require('./routes/increaseUpvotes'));
 
 // app.use("/post-comment", require('./routes/postComment'));

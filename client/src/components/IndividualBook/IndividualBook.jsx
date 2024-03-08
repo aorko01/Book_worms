@@ -8,6 +8,8 @@ const IndividualBook = () => {
   const [reviews, setReviews] = useState([]);
   const [owners, setOwners] = useState([]);
   const [borrowModal, setBorrowModal] = useState(false);
+  const [borrowDuration, setBorrowDuration] = useState(7); // Default borrow duration
+  const [selectedOwnerId, setSelectedOwnerId] = useState(null);
 
   useEffect(() => {
     const fetchBookDetails = async () => {
@@ -39,9 +41,41 @@ const IndividualBook = () => {
     return <div>Loading...</div>;
   }
 
-  const handleBorrow = (book_id, user_id) => {
-    // navigate(`/individual-book/${bookId}`);
+  const handleBorrow = (owner_id) => {
+    setSelectedOwnerId(owner_id);
     setBorrowModal(true);
+  };
+
+  const requestBorrow = async () => {
+    try {
+      // console.log("Borrow requested for book ID:", book.book_id);
+      // console.log("Owner ID:", selectedOwnerId);
+      // console.log("Borrow for:", borrowDuration, "days");
+  
+      const response = await fetch(`http://localhost:3000/borrowrequest`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // Ensures cookies are sent with the request
+        body: JSON.stringify({
+          owner_id: selectedOwnerId,
+          book_id: book.book_id,
+          borrow_days: borrowDuration,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+  
+      const data = await response.json();
+      console.log("Borrow request response:", data);
+      setBorrowModal(false);
+    } catch (error) {
+      console.error("Error requesting borrow:", error);
+    }
+    setBorrowModal(false);
   };
 
   return (
@@ -113,29 +147,57 @@ const IndividualBook = () => {
                   <div className="text-sm">{owner.email_address}</div>
                   <button
                     className="bg-green-500 hover:bg--700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-2"
-                    onClick={() => handleBorrow(book.book_id, owner.user_id)}
+                    onClick={() => handleBorrow(owner.user_id)}
                   >
                     Borrow
                   </button>
                   {borrowModal && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                      <div className="bg-gray-800 p-8 rounded-lg shadow-lg">
-                        <div className="text-2xl font-semibold mb-4">
-                          Borrow Book from {`${owner.first_name} ${owner.last_name}`}
-                        </div>
-                        <div className="flex justify-between">
-                          <button
-                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                            onClick={() => setBorrowModal(false)}
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                            onClick={() => setBorrowModal(false)}
-                          >
-                            Confirm
-                          </button>
+                      <div className="bg-gray-800 p-8 rounded-lg shadow-lg flex">
+                        <div>
+                          <div className="text-2xl font-semibold mb-4">
+                            Borrow Book from{" "}
+                            {`${owner.first_name} ${owner.last_name}`}
+                          </div>
+                          <div className="mb-4">
+                            <p className="text-xl font-semibold">
+                              {book.title}
+                            </p>
+                            <p className="text-lg">
+                              Author: {book.author_name}
+                            </p>
+                          </div>
+                          <div className="flex items-center mb-4">
+                            <label htmlFor="borrowDuration" className="mr-2">
+                              Borrow for:
+                            </label>
+                            <input
+                              type="number"
+                              id="borrowDuration"
+                              className="p-2 border rounded bg-gray-600"
+                              min="1"
+                              max="365"
+                              value={borrowDuration}
+                              onChange={(e) =>
+                                setBorrowDuration(parseInt(e.target.value))
+                              }
+                            />
+                            <span className="ml-2">days</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <button
+                              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                              onClick={() => setBorrowModal(false)}
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                              onClick={requestBorrow}
+                            >
+                              Borrow
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
