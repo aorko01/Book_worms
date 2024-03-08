@@ -56,6 +56,10 @@ app.use("/friends", require('./routes/friends'));
 
 app.use("/individual-book", require('./routes/getIndividualBook'));
 
+app.use("/add-upvote", require('./routes/addupvote'));
+
+app.use("/reduce-upvote", require('./routes/reduceupvote'));
+
 // app.use("groups", require('./routes/groups'));
 
 // app.use("add-book", require('./routes/addBook'));

@@ -179,7 +179,7 @@ function Bookinfo() {
                     key={book.book_id}
                   >
                     <img
-                      src={book.cover_url || "../public/default_book_cover.jpg"}
+                      src={book.cover_url || "https://i.pinimg.com/564x/69/a8/a8/69a8a8249d3cc620ff82e8c922c9bd61.jpg"}
                       alt={book.title}
                       className="rounded-lg mb-2"
                       style={{ width: "80%" }}
