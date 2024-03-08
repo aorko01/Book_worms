@@ -133,7 +133,6 @@ const NavigationBar = () => {
     const payload = selectedBook && selectedBook.source === "local"
         ? {
             book_id: selectedBook.id,
-
             audience: audience, // Update this line to include the audience
 
           }

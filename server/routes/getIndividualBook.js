@@ -14,8 +14,8 @@ router.get("/:book_id", authorization, async (req, res) => {
             SELECT u.user_id, u.first_name, u.last_name, u.email_address
             FROM public.user_info u
             INNER JOIN public.bookcopy bc ON u.user_id = bc.owner_id
-            WHERE bc.book_id = $1
-        `, [book_id]);
+            WHERE bc.book_id = $1 and bc.availability = true and u.user_id != $2
+        `, [book_id, req.user]);
 
         // Fetch reviews, their corresponding comments, and reviewer information
         const reviews = await pool.query(`

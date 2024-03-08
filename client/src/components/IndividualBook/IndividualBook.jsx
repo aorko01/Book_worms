@@ -7,6 +7,7 @@ const IndividualBook = () => {
   const [book, setBook] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [owners, setOwners] = useState([]);
+  const [borrowModal, setBorrowModal] = useState(false);
 
   useEffect(() => {
     const fetchBookDetails = async () => {
@@ -38,6 +39,11 @@ const IndividualBook = () => {
     return <div>Loading...</div>;
   }
 
+  const handleBorrow = (book_id, user_id) => {
+    // navigate(`/individual-book/${bookId}`);
+    setBorrowModal(true);
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <NavigationBar />
@@ -68,7 +74,10 @@ const IndividualBook = () => {
                 <div className="w-1/4 flex flex-col items-center justify-center border-r border-gray-700">
                   <img
                     className=" w-20 h-auto mb-2"
-                    src={book.cover_url || "../public/photo_2024-02-29_23-38-49.jpg"}
+                    src={
+                      book.cover_url ||
+                      "../public/photo_2024-02-29_23-38-49.jpg"
+                    }
                     alt={book.title}
                   />
                   <div className="text-center text-lg">{book.title}</div>
@@ -95,8 +104,42 @@ const IndividualBook = () => {
             {owners.length > 0 ? (
               owners.map((owner, index) => (
                 <div key={index} className="py-2">
-                  <div className="text-lg mb-1">{`${owner.first_name} ${owner.last_name}`}</div>
+                  <img
+                    className="rounded-full w-10 h-10 mr-2"
+                    src="https://cdn4.vectorstock.com/i/1000x1000/06/18/male-avatar-profile-picture-vector-10210618.jpg"
+                    alt="Reviewer Avatar"
+                  />
+                  <div className="text-xl mb-1 font-bold">{`${owner.first_name} ${owner.last_name}`}</div>
                   <div className="text-sm">{owner.email_address}</div>
+                  <button
+                    className="bg-green-500 hover:bg--700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-2"
+                    onClick={() => handleBorrow(book.book_id, owner.user_id)}
+                  >
+                    Borrow
+                  </button>
+                  {borrowModal && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                      <div className="bg-gray-800 p-8 rounded-lg shadow-lg">
+                        <div className="text-2xl font-semibold mb-4">
+                          Borrow Book from {`${owner.first_name} ${owner.last_name}`}
+                        </div>
+                        <div className="flex justify-between">
+                          <button
+                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            onClick={() => setBorrowModal(false)}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            onClick={() => setBorrowModal(false)}
+                          >
+                            Confirm
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))
             ) : (
