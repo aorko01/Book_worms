@@ -60,6 +60,8 @@ app.use("/add-upvote", require('./routes/addupvote'));
 
 app.use("/reduce-upvote", require('./routes/reduceupvote'));
 
+app.use("/profile", require('./routes/profile'));
+
 // app.use("groups", require('./routes/groups'));
 
 // app.use("add-book", require('./routes/addBook'));

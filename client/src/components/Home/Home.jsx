@@ -24,10 +24,10 @@ const Home = () => {
     try {
       // Check if the review has already been upvoted
       const alreadyUpvoted = upvotedReviews.has(review_id);
-  
+
       // Determine the route based on whether the review has already been upvoted
       const route = alreadyUpvoted ? "/reduce-upvote" : "/add-upvote";
-  
+
       // Make the request to the appropriate route
       const response = await fetch(`http://localhost:3000${route}`, {
         method: "POST",
@@ -37,11 +37,11 @@ const Home = () => {
         body: JSON.stringify({ review_id }),
         credentials: "include",
       });
-  
+
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-  
+
       // If the review was already upvoted, remove it from the upvotedReviews set
       if (alreadyUpvoted) {
         setUpvotedReviews((prevUpvotedReviews) => {
@@ -51,9 +51,11 @@ const Home = () => {
         });
       } else {
         // Otherwise, add it to the upvotedReviews set
-        setUpvotedReviews((prevUpvotedReviews) => new Set(prevUpvotedReviews.add(review_id)));
+        setUpvotedReviews(
+          (prevUpvotedReviews) => new Set(prevUpvotedReviews.add(review_id))
+        );
       }
-  
+
       await fetchData(); // Call fetchData again to refresh the data on the page
       // Optionally, reset any states related to the review form here
       // Additional code for handling the response and resetting state
@@ -61,7 +63,7 @@ const Home = () => {
       console.error("Error posting review:", error);
     }
   };
-  
+
   // Define fetchData as a standalone function
   const fetchData = async () => {
     try {
@@ -335,12 +337,12 @@ const Home = () => {
                   <div className="mb-4 text-white text-lg mb-14 mt-3 ">
                     {review.review_text}
                   </div>
+
                   <div className="flex items-center mb-6">
-                    {review.upvotes}
-                    </div>
-                  <div className="flex items-center mb-6">
-                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
-                    onClick={() => handleUpvote(review.review_id)}
+                    <div className="mr-3 font-bold">{review.upvotes}</div>
+                    <button
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline mr-2"
+                      onClick={() => handleUpvote(review.review_id)}
                     >
                       Upvote
                     </button>
