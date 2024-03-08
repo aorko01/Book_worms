@@ -13,7 +13,7 @@ router.get("/", authorization, async (req, res) => {
       SELECT DISTINCT book.*
       FROM book
       JOIN bookcopy ON book.book_id = bookcopy.book_id
-      WHERE (
+      WHERE ((
         bookcopy.owner_id IN (
           SELECT friend_id FROM friendlist WHERE user_id = $1
           UNION
@@ -31,7 +31,8 @@ router.get("/", authorization, async (req, res) => {
       )
       OR (
         bookcopy.sharing_status = 'public' AND bookcopy.owner_id <> $1
-      );
+      ))
+      AND bookcopy.availability = true;
     `;
     const { rows: books } = await pool.query(bookQuery, [userId]);
 

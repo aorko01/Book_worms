@@ -219,6 +219,35 @@ const NavigationBar = () => {
     }
   };
 
+  const handleModalAccept = async (request) => {
+    try {
+      // Send a request to update the acceptance status of the book request
+      const response = await fetch("http://localhost:3000/acceptbookrequest", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          borrower_id: request.borrower_id,
+          copy_id: request.copy_id,
+        }),
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      // Handle success response if needed
+      console.log("Book request accepted successfully");
+
+      // Close the modal and reset selectedRequest state
+    } catch (error) {
+      console.error("Error accepting book request:", error);
+      // Handle error if needed
+    }
+  };
+
   const handleLogout = async () => {
     try {
       const response = await fetch("http://localhost:3000/logout", {
@@ -308,7 +337,7 @@ const NavigationBar = () => {
                 <ul className="w-full mt-4 flex flex-col items-start">
                   {bookRequests.map((request) => (
                     <li
-                      key={request.borrow_days}
+                    key={request.copy_id}
                       className="p-2 hover:bg-gray-600 cursor-pointer text-lg border-2 border-gray-600 w-full"
                       onClick={() => handleRequestClick(request)}
                     >
@@ -434,25 +463,33 @@ const NavigationBar = () => {
         <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center">
           <div className="bg-gray-700 rounded-lg p-8">
             <h2 className="text-xl font-bold mb-4">Book Request</h2>
-            <p>{`${selectedRequest.first_name} ${selectedRequest.last_name} is asking for "${selectedRequest.title}" book.`}</p>
+            {selectedRequest.acceptance ? (
+              <p>
+                You accepted the request for "{selectedRequest.title}" from{" "}
+                {selectedRequest.first_name} {selectedRequest.last_name}.
+              </p>
+            ) : (
+              <p>
+                {selectedRequest.first_name} {selectedRequest.last_name} is
+                asking for "{selectedRequest.title}" book for{" "}
+                {selectedRequest.borrow_days} days.
+              </p>
+            )}
             <div className="mt-4 flex justify-end">
-              <button
-                className="bg-green-500 text-white px-4 py-2 rounded-md mr-2"
-                onClick={() => {
-                  // Handle accept request action
-                  // Example: Accept the request and close modal
-                  // You can implement your logic here
-                  handleModalClose();
-                }}
-              >
-                Accept
-              </button>
+              {!selectedRequest.acceptance && (
+                <button
+                  className="bg-green-500 text-white px-4 py-2 rounded-md mr-2"
+                  onClick={() => {
+                    handleModalAccept(selectedRequest);
+                    handleModalClose();
+                  }}
+                >
+                  Accept
+                </button>
+              )}
               <button
                 className="bg-red-500 text-white px-4 py-2 rounded-md"
                 onClick={() => {
-                  // Handle decline request action
-                  // Example: Decline the request and close modal
-                  // You can implement your logic here
                   handleModalClose();
                 }}
               >
