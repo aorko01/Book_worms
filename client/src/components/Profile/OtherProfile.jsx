@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from "react";
 import NavigationBar from "../NavigationBar/NavigationBar";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate,useParams } from "react-router-dom";
 
 const OtherProfile = () => {
+  // State and useEffect for fetching user profile data
   const [userData, setUserData] = useState({});
   const navigate = useNavigate();
-  const { userId } = useParams(); // Get the userId parameter from the URL
+  const { userId } = useParams();
 
   const handleGetBookClick = (bookId) => {
     navigate(`/individual-book/${bookId}`);
   };
 
   useEffect(() => {
-    console.log("fetching user profile data");
-
-    const fetchUserData = async () => {
+    console.log("fetching other user profile data");
+    // Fetch other user profile data from the server using the userId parameter
+    const fetchOtherUserData = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/profile?user_id=${userId}`, {
+        const response = await fetch(`http://localhost:3000/other-profile/${userId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -29,20 +30,21 @@ const OtherProfile = () => {
         }
         const data = await response.json();
         setUserData(data);
-        console.log("User data:", data);
+        console.log("Other User data:", data);
       } catch (error) {
-        console.error("Error fetching user profile data:", error);
+        console.error("Error fetching other user profile data:", error);
       }
     };
 
-    fetchUserData();
-  }, [userId]); // Fetch data when userId changes
+    fetchOtherUserData();
+  }, [userId]);
 
   return (
     <div className="bg-gray-900 text-white min-h-screen">
       <NavigationBar />
 
       <div className="flex justify-between my-10 mx-10 pt-[4rem]">
+        {/* user information */}
         <div className="w-1/4 pr-4 border-r border-gray-700">
           <img
             src={
@@ -57,26 +59,33 @@ const OtherProfile = () => {
                 `${userData.user.first_name} ${userData.user.last_name}`}
             </h2>
           </div>
-
-          <div>
-            <h3 className="text-xl font-semibold mb-2">Groups:</h3>
-            <ul className="text-gray-400">
-              {userData.groups &&
-                userData.groups.map((group) => (
-                  <li key={group.group_id}>{group.group_name}</li>
-                ))}
-            </ul>
+          <div className="text-2xl font-semibold">
+            {userData.user && `${userData.user.email_address}`}
           </div>
         </div>
 
         <div className="w-1/2 px-4">
           <h2 className="text-4xl font-semibold mb-7 mt-8">Reviews</h2>
-          {/* {userData.reviews &&
+          {userData.reviews &&
             userData.reviews.map((review) => (
-              <div className="mt-8" key={review.review_id}>
-                // Render review content here
+              <div
+                className="bg-gray-800 p-4 mb-4 rounded-lg shadow-lg"
+                key={review.review_id}
+              >
+                <div className="mb-2 flex justify-between items-center">
+                  <div className="text-xl font-semibold">
+                    {review.book_title} by {review.book_author}
+                  </div>
+                  <div className="text-xl font-semibold">{review.rating}/5</div>
+                </div>
+                <div className="mb-2 text-gray-200">{review.review_text}</div>
+                <div className="flex items-center text-gray-400">
+                  <span className="mr-2">{review.review_time}</span>
+                  <span className="mr-2">Upvotes: {review.upvotes}</span>
+                  <span>Replies: {review.reply_count}</span>
+                </div>
               </div>
-            ))} */}
+            ))}
         </div>
 
         <div className="w-1/5 pl-4 border-l border-gray-700">

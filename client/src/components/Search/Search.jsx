@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams,useNavigate } from "react-router-dom";
 import NavigationBar from "../NavigationBar/NavigationBar"; // Ensure correct import path
+import Chatlist from "../Chatlist/Chatlist";
 
 function Search() {
   let [searchParams] = useSearchParams();
   const searchText = searchParams.get("query");
   const [results, setResults] = useState({ users: [], books: [] });
   const navigate = useNavigate();
+  const handleGetBookClick = (bookId) => {
+    navigate(`/individual-book/${bookId}`);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,6 +41,7 @@ function Search() {
   }, [searchText]);
 
   const handleViewProfile = (toUserId) => {
+    console.log("Viewing profile of user:", toUserId);
     navigate(`/otherprofile/${toUserId}`);
   };
 
@@ -120,7 +125,14 @@ function Search() {
                       <div className="mb-2 flex justify-center text-lg">
                         Pages: {book.page_count}
                       </div>
+                      <button
+                      className="bg-violet-500 hover:bg--700 text-white font-bold py-2 px-4 rounded-xl focus:outline-none focus:shadow-outline mt-2"
+                      onClick={() => handleGetBookClick(book.book_id)}
+                    >
+                      About this Book
+                    </button>
                     </div>
+                    
                   ))}
                 </div>
               </div>
@@ -136,19 +148,7 @@ function Search() {
       </div>
       {/* Chat List Placeholder */}
       <div className="w-1/4 pl-4 border-l border-gray-700 mt-32">
-        <h2 className="text-4xl font-semibold mb-6">Chat List</h2>
-        <div className="flex flex-col gap-4">
-          {/* Placeholder Chat Entries */}
-          <div className="bg-gray-700 rounded-lg shadow p-4">
-            <p className="font-semibold">Chat 1</p>
-          </div>
-          <div className="bg-gray-700 rounded-lg shadow p-4">
-            <p className="font-semibold">Chat 2</p>
-          </div>
-          <div className="bg-gray-700 rounded-lg shadow p-4">
-            <p className="font-semibold">Chat 3</p>
-          </div>
-        </div>
+        <Chatlist />
       </div>
     </div>
   );

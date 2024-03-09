@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import NavigationBar from '../NavigationBar/NavigationBar'; // Ensure correct import path
+import Chatlist from '../Chatlist/Chatlist';
 
 function Friends() {
   const [friendRequests, setFriendRequests] = useState([]);
@@ -173,8 +174,7 @@ function Friends() {
         </div>
       </div>
       <div className="w-1/4 pl-4 border-l border-gray-700 mt-32">
-        <h2 className="text-4xl font-semibold mb-6">Chat List</h2>
-        {/* Add your chat list component here */}
+        <Chatlist/>
       </div>
     </div>
   );

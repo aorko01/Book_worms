@@ -62,7 +62,7 @@ app.use("/getchatlist", require("./routes/getchatlist"));
 
 app.use("/getmessages", require("./routes/getmessages"));
 
-app.use("/otherprofile", require("./routes/otherprofile"));
+app.use("/other-profile", require("./routes/otherprofile"));
 
 // app.use("groups", require('./routes/groups'));
 

@@ -2,10 +2,11 @@ const router = require("express").Router();
 const pool = require("../db");
 const authorization = require("../middleware/authorization");
 
-router.get("/", authorization, async (req, res) => {
-    console.log("fetching user profile data");
-    const user_id = req.query.user_id; // Get the user_id from the query parameters
-    console.log("user_id:", user_id);
+router.get("/:userId", authorization, async (req, res) => {
+    console.log("fetching other user profile data");
+    const { userId } = req.params; // Get the userId from the URL parameter
+    const user_id = userId;
+   
     try {
         // Fetch user information
         const userQuery = `
@@ -46,7 +47,7 @@ router.get("/", authorization, async (req, res) => {
         const userGroupsData = await pool.query(userGroupsQuery, [user_id]);
         const userGroups = userGroupsData.rows;
 
-        // Fetch reviews written by the user along with comments
+        // Fetch reviews written by the user along with book information and comments
         const reviewQuery = `
             SELECT 
                 r.review_id, 
@@ -56,14 +57,18 @@ router.get("/", authorization, async (req, res) => {
                 r.reviewer_id, 
                 r.audience, 
                 r.review_time,
-                COUNT(DISTINCT ci.comment_id) AS reply_count
+                COUNT(DISTINCT ci.comment_id) AS reply_count,
+                b.title AS book_title,
+                b.author_name AS book_author,
+                b.genre AS book_genre
             FROM 
                 public.review r
             LEFT JOIN public.comment_info ci ON ci.review_id = r.review_id AND ci.prev_comment_id IS NOT NULL
+            LEFT JOIN public.book b ON r.book_id = b.book_id
             WHERE 
                 r.reviewer_id = $1
             GROUP BY 
-                r.review_id, r.book_id, r.review_text, r.upvotes, r.reviewer_id, r.audience, r.review_time
+                r.review_id, r.book_id, r.review_text, r.upvotes, r.reviewer_id, r.audience, r.review_time, b.title, b.author_name, b.genre
             ORDER BY 
                 r.review_time DESC;
         `;
@@ -82,5 +87,6 @@ router.get("/", authorization, async (req, res) => {
         res.status(500).send("Server error");
     }
 });
+
 
 module.exports = router;
