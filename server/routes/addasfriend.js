@@ -5,26 +5,24 @@ const authorization = require("../middleware/authorization");
 
 router.post("/", authorization, async (req, res) => {
   try {
-    const { groupId } = req.body; // Group id sent in the request body
     const userId = req.user; // User id retrieved from authorization middleware
+    const { from_id } = req.body; // From id attached with the request body
+    console.log("from_id: ", from_id);
+    console.log("user_id: ", userId);
 
-    // Check if the user is already a member of the group
-    const existingMember = await pool.query(
-      "SELECT * FROM member WHERE user_id = $1 AND group_id = $2",
-      [userId, groupId]
-    );
+    // Update the row with the specified from_id and user_id
+    const updateFriendRequestQuery = `
+      UPDATE public.friendrequest
+      SET acceptance = true,
+          evaluated = true
+      WHERE from_id = $1
+        AND to_id = $2
+        AND evaluated = false;`;
 
-    if (existingMember.rows.length > 0) {
-      return res.status(400).json({ message: "User is already a member of the group" });
-    }
+    // Execute the query
+    await pool.query(updateFriendRequestQuery, [from_id, userId]);
 
-    // Add the user as a member of the group
-    await pool.query(
-      "INSERT INTO member (user_id, group_id) VALUES ($1, $2)",
-      [userId, groupId]
-    );
-
-    res.json({ message: "User added as a group member successfully" });
+    res.json({ message: "Friend request updated successfully" });
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server error");

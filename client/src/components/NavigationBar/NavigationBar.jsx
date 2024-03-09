@@ -292,19 +292,20 @@ const NavigationBar = () => {
   
 
   const handleLogout = async () => {
-    try {
-      const response = await fetch("http://localhost:3000/logout", {
-        method: "GET",
-        credentials: "include",
-      });
-      if (response.ok) {
-        navigate("/login");
-      } else {
-        throw new Error("Logout failed");
-      }
-    } catch (error) {
-      console.error("Error during logout:", error);
-    }
+    // try {
+    //   const response = await fetch("http://localhost:3000/logout", {
+    //     method: "GET",
+    //     credentials: "include",
+    //   });
+    //   if (response.ok) {
+    //     navigate("/login");
+    //   } else {
+    //     throw new Error("Logout failed");
+    //   }
+    // } catch (error) {
+    //   console.error("Error during logout:", error);
+    // }
+    navigate("/");
   };
 
   return (
