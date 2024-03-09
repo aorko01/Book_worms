@@ -74,6 +74,8 @@ app.use("/getmessages", require("./routes/getmessages"));
 
 app.use("/other-profile", require("./routes/otherprofile"));
 
+app.use("/addintogroup", require("./routes/addintogroup"));
+
 // app.use("groups", require('./routes/groups'));
 
 // app.use("add-book", require('./routes/addBook'));

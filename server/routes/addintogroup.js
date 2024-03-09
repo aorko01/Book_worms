@@ -4,8 +4,10 @@ const validInfo = require("../middleware/validinfo");
 const authorization = require("../middleware/authorization");
 
 router.post("/", authorization, async (req, res) => {
+    console.log("Adding user to group");
   try {
     const { groupId } = req.body; // Group id sent in the request body
+    console.log("Group id: ", groupId);
     const userId = req.user; // User id retrieved from authorization middleware
 
     // Check if the user is already a member of the group

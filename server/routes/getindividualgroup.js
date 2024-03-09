@@ -7,9 +7,9 @@ router.get("/:groupId", authorization, async (req, res) => {
     const { groupId } = req.params;
 
     try {
-        // Fetch group name
-        const group = await pool.query("SELECT * FROM public.group_info WHERE group_id = $1", [groupId]);
-        const groupName = group.rows[0].group_name;
+        // Fetch group details including name, description, etc.
+        const groupDetails = await pool.query("SELECT * FROM public.group_info WHERE group_id = $1", [groupId]);
+        const groupInfo = groupDetails.rows[0]; // Assuming there's only one group with the provided ID
 
         // Fetch group members
         const groupMembers = await pool.query("SELECT * FROM public.member WHERE group_id = $1", [groupId]);
@@ -27,7 +27,7 @@ router.get("/:groupId", authorization, async (req, res) => {
         );
 
         res.json({
-            groupName: groupName,
+            groupInfo: groupInfo,
             groupMembers: groupMembers.rows,
             uniqueBooksOwnedByGroupMembers: books.rows,
             reviewsByGroupMembers: reviews.rows
