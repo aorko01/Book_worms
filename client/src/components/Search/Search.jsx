@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams,useNavigate } from "react-router-dom";
 import NavigationBar from "../NavigationBar/NavigationBar"; // Ensure correct import path
 
 function Search() {
   let [searchParams] = useSearchParams();
   const searchText = searchParams.get("query");
   const [results, setResults] = useState({ users: [], books: [] });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,27 +36,8 @@ function Search() {
     }
   }, [searchText]);
 
-  const handleSendFriendRequest = async (toUserId) => {
-    try {
-      const response = await fetch("http://localhost:3000/send-request", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ to_id: toUserId }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to send friend request");
-      }
-
-      const responseData = await response.json();
-      alert(responseData.message);
-      // Optionally, update the state or UI to reflect the change without reloading
-    } catch (error) {
-      console.error("Error sending friend request:", error);
-    }
+  const handleViewProfile = (toUserId) => {
+    navigate(`/otherprofile/${toUserId}`);
   };
 
   return (
@@ -96,13 +78,11 @@ function Search() {
                       <div className="mt-5 flex gap-2">
                         <button
                           className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-1 px-2 rounded"
-                          onClick={() => handleSendFriendRequest(user.user_id)}
+                          onClick={() => handleViewProfile(user.user_id)}
                         >
-                          Add Friend
+                          View Profile
                         </button>
-                        <button className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-2 rounded">
-                          Remove
-                        </button>
+                        
                       </div>
                     </div>
                   ))}

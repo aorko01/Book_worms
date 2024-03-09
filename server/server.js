@@ -60,6 +60,10 @@ app.use("/profile", require("./routes/profile"));
 
 app.use("/getchatlist", require("./routes/getchatlist"));
 
+app.use("/getmessages", require("./routes/getmessages"));
+
+app.use("/otherprofile", require("./routes/otherprofile"));
+
 // app.use("groups", require('./routes/groups'));
 
 // app.use("add-book", require('./routes/addBook'));

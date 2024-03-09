@@ -15,6 +15,7 @@ import AddBook from "./components/AddBook/AddBook";
 import Profile from "./components/Profile/Profile";
 import Search from "./components/Search/Search";
 import IndividualBook from "./components/IndividualBook/IndividualBook";
+import OtherProfile from "./components/Profile/OtherProfile";
 const App = () => {
 
 
@@ -31,6 +32,7 @@ const App = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/search" element={<Search />} />
         <Route path="/individual-book/:bookId" element={<IndividualBook />} />
+        <Route path="/otherprofile/:userId" element={<OtherProfile />} />
       </Routes>
     </Router>
   );
