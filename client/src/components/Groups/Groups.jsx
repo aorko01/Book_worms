@@ -58,7 +58,8 @@ function Groups() {
   };
 
   const handleGetGroupClick = (groupId) => {
-    // Add your navigation logic here
+    
+    navigate(`/individual-group/${groupId}`);
   };
 
   return (

@@ -16,9 +16,9 @@ import Profile from "./components/Profile/Profile";
 import Search from "./components/Search/Search";
 import IndividualBook from "./components/IndividualBook/IndividualBook";
 import OtherProfile from "./components/Profile/OtherProfile";
+import IndividualGroup from "./components/IndividualGroup/IndividualGroup"; // Import IndividualGroup component
+
 const App = () => {
-
-
   return (
     <Router>
       <Routes>
@@ -33,6 +33,7 @@ const App = () => {
         <Route path="/search" element={<Search />} />
         <Route path="/individual-book/:bookId" element={<IndividualBook />} />
         <Route path="/otherprofile/:userId" element={<OtherProfile />} />
+        <Route path="/individual-group/:groupId" element={<IndividualGroup />} /> {/* Add this route for IndividualGroup */}
       </Routes>
     </Router>
   );

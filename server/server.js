@@ -52,11 +52,15 @@ app.use('/groups', require('./routes/getgroups'));
 
 // app.use("/increase-upvotes", require('./routes/increaseUpvotes'));
 
+app.use("/individualgroup", require("./routes/getindividualgroup"));
+
 // app.use("/post-comment", require('./routes/postComment'));
 
 app.use("/friends", require("./routes/friends"));
 
 app.use("/individual-book", require("./routes/getIndividualBook"));
+
+app.use("/delete-book", require("./routes/deletebook"));
 
 app.use("/add-upvote", require("./routes/addupvote"));
 
