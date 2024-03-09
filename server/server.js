@@ -46,6 +46,10 @@ app.use("/acceptbookrequest", require("./routes/accpetbookrequest"));
 
 app.use("/return-book", require("./routes/return-book"));
 
+app.use('/create-group', require('./routes/creategroup'));
+
+app.use('/groups', require('./routes/getgroups'));
+
 // app.use("/increase-upvotes", require('./routes/increaseUpvotes'));
 
 // app.use("/post-comment", require('./routes/postComment'));
