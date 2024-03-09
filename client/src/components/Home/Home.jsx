@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import NavigationBar from "../NavigationBar/NavigationBar";
 import { useNavigate } from "react-router-dom";
+import Chatlist from "../Chatlist/Chatlist";
 
 const Home = () => {
   const [books, setBooks] = useState([]);
@@ -369,7 +370,7 @@ const Home = () => {
         </div>
 
         <div className="w-1/5 pl-4 border-l border-gray-700">
-          <h2 className="text-4xl font-semibold mb-6">Chat List</h2>
+          <Chatlist/>
         </div>
       </div>
     </div>
