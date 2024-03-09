@@ -14,15 +14,25 @@ const NavigationBar = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [audience, setAudience] = useState("public");
   const [bookRequests, setBookRequests] = useState([]);
+  const [booksToReturn, setBooksToReturn] = useState([]);
 
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [selectedRequest2, setSelectedRequest2] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showModal2, setShowModal2] = useState(false);
 
   const handleRequestClick = (request) => {
     setSelectedRequest(request);
     setShowModal(true);
     setIsNotification(false);
   };
+
+  const handleRequestClick2 = (request) => {
+    setSelectedRequest2(request);
+    setShowModal2(true);
+    setIsNotification(false);
+  };
+
 
   const handleModalClose = () => {
     setSelectedRequest(null);
@@ -69,7 +79,10 @@ const NavigationBar = () => {
       const data = await response.json();
 
       setBookRequests(data.bookRequests);
+      setBooksToReturn(data.booksToReturn);
+
       console.log("Book requests fetched:", data.bookRequests);
+      console.log("Books to return fetched:", data.booksToReturn);
     } catch (error) {
       console.error("Error fetching book requests:", error);
     }
@@ -248,6 +261,36 @@ const NavigationBar = () => {
     }
   };
 
+  const handleReturnBook = async (request) => {
+    try {
+      const response = await fetch("http://localhost:3000/return-book", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sharing_id: request.sharing_id,
+        }),
+        credentials: "include",
+      });
+  
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+  
+      // Handle success response if needed
+      console.log("Book returned successfully");
+  
+      // Close the modal and reset selectedRequest2 state
+      setShowModal2(false);
+      setSelectedRequest2(null);
+    } catch (error) {
+      console.error("Error returning book:", error);
+      // Handle error if needed
+    }
+  };
+  
+
   const handleLogout = async () => {
     try {
       const response = await fetch("http://localhost:3000/logout", {
@@ -337,11 +380,20 @@ const NavigationBar = () => {
                 <ul className="w-full mt-4 flex flex-col items-start">
                   {bookRequests.map((request) => (
                     <li
-                    key={request.copy_id}
+                      key={request.copy_id}
                       className="p-2 hover:bg-gray-600 cursor-pointer text-lg border-2 border-gray-600 w-full"
                       onClick={() => handleRequestClick(request)}
                     >
                       {`Request for ${request.title} from ${request.last_name} ${request.borrow_days} days`}
+                    </li>
+                  ))}
+                  {booksToReturn.map((request) => (
+                    <li
+                      key={request.copy_id}
+                      className="p-2 hover:bg-gray-600 cursor-pointer text-lg border-2 border-gray-600 w-full"
+                      onClick={() => handleRequestClick2(request)}
+                    >
+                      {`Return ${request.title} `}
                     </li>
                   ))}
                 </ul>
@@ -494,6 +546,27 @@ const NavigationBar = () => {
                 }}
               >
                 Decline
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showModal2 && selectedRequest2 && (
+        <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-gray-700 rounded-lg p-8">
+            <h2 className="text-xl font-bold mb-4">Book Return</h2>
+            <p>
+              You have to return "{selectedRequest2.title}" book 
+            </p>
+            <div className="mt-4 flex justify-end">
+              <button
+                className="bg-green-500 text-white px-4 py-2 rounded-md"
+                onClick={() => {
+                  handleReturnBook(selectedRequest2);
+                  handleModalClose();
+                }}
+              >
+                Return
               </button>
             </div>
           </div>

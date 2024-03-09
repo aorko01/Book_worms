@@ -205,7 +205,7 @@ const IndividualBook = () => {
                 </div>
               ))
             ) : (
-              <div className="text-center text-lg">No owners found</div>
+              <div className="text-center text-lg">Currently Unavailable</div>
             )}
           </div>
         </div>

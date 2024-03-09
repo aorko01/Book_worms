@@ -76,7 +76,7 @@ const OtherProfile = () => {
                   <div className="text-xl font-semibold">
                     {review.book_title} by {review.book_author}
                   </div>
-                  <div className="text-xl font-semibold">{review.rating}/5</div>
+                  {/* <div className="text-xl font-semibold">{review.rating}/5</div> */}
                 </div>
                 <div className="mb-2 text-gray-200">{review.review_text}</div>
                 <div className="flex items-center text-gray-400">
